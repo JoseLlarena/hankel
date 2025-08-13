@@ -1,0 +1,51 @@
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["hankel", "hankel.*"]
+exclude = ["unittests*"]
+
+[build-system]
+requires = ["setuptools>=59.6.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hankel"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = ["click>=8.2.1",
+                "deal>=4.24.5",
+                "graphviz>=0.21",
+                "more-itertools>=10.7.0",
+                "pydantic>=2.11.7",
+                "scikit-learn>=1.7.1",
+                "setuptools>=80.9.0",
+                "wheel>=0.45.1"]
+license = { file = "LICENSE" }
+authors = [{ name = "Jose Llarena", email = "jose.llarena@gmail.com" }]
+maintainers = [{ name = "Jose Llarena", email = "jose.llarena@gmail.com" }]
+description = "CLI application for the spectral learning of WFSAs"
+readme = "README.md"
+keywords = ["spectral learning", "wfsa", "machine learning"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Other Environment",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence"
+]
+
+[project.urls]
+repository = "https://github.com/JoseLlarena/hankel"
+
+[project.optional-dependencies]
+dev = ["pytest>=8.4.1", "pytest-cov>=6.2.1", "hypothesis>=6.136.6" ]
+
+[project.scripts]
+hankel-learn = "hankel.cli:learn"
+hankel-predict = "hankel.cli:predict"
+hankel-show = "hankel.cli:show"
