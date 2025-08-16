@@ -104,7 +104,7 @@ def to_labelled_dataset(inputs: Iterable[Sequence[X]],
 
 
 # @validate_call(config=PYDANTIC_CONFIG, validate_return=True)
-def to_unlabelled_dataset(inputs: Iterable[Sequence[X]], x_coder: Coder[X]) -> Tuple[NDArray,...]:
+def to_unlabelled_dataset(inputs: Iterable[Sequence[X]], x_coder: Coder[X]) -> Tuple[NDArray, ...]:
     """
     Encodes a collection of unabelled sequences into one-hot encoded sequences
 
@@ -151,6 +151,9 @@ def polar_coder_from(vocab: Iterable[T]) -> Coder[T]:
     """
     vocab = tuple(vocab)
 
+    if not vocab:
+        raise ValueError("Vocabulary cannot be empty")
+
     def polar_tensorise(seq: Sequence[T], token_to_id: Mapping[T, int]) -> NDArray:
         tens = one_hot_tensorise(seq, token_to_id)
         tens[tens == 0] = -1
@@ -172,11 +175,10 @@ def id_coder_from(vocab: Iterable[T]) -> Coder[T]:
     :return: coder
     """
     vocab = tuple(vocab)
-    if len(vocab) == 0:
+    if not vocab:
         raise ValueError("Vocabulary cannot be empty")
 
     return Coder(vocab, int_tensorise, int_untensorise)
-
 
 
 @deal.pre(lambda seq, token_to_id: seq.ndim == 1 and len(token_to_id))
@@ -273,7 +275,7 @@ def with_bias(seq: NDArray) -> NDArray:
     """
     if seq.ndim != 2 or seq.shape[-1] == 0:
         raise ValueError(f'Invalid array shape [{seq.shape}]')
-    
+
     return concatenate([seq, ones((seq.shape[0], 1))], axis=-1)  # NxD -> NxD+1
 
 
@@ -289,6 +291,7 @@ def without_bias(seq: NDArray) -> NDArray:
         raise ValueError(f'Invalid array shape [{seq.shape}]')
 
     return seq[:, :-1]  # NxD -> NxD-1
+
 
 @validate_call(config=PYDANTIC_CONFIG, validate_return=True)
 def load_labelled_data(path: str) -> Iterable[Tuple[Tuple[str, ...], str]]:
@@ -306,7 +309,7 @@ def load_labelled_data(path: str) -> Iterable[Tuple[Tuple[str, ...], str]]:
     Yields:
         Iterator[Iterable[Tuple[Tuple[str, ...], str]]]: a collection of data rows with the input and target strings.
     """
-    
+
     if not exists(path):
         raise FileNotFoundError(f"Data file [{path}] does not exist")
 

@@ -22,7 +22,16 @@ from hankel.models import WFSA
 Port: TypeAlias = Literal['n', 's', 'e', 'w', 'nw', 'sw', 'se', 'ne']
 
 ALL_PORTS: Final[Tuple[Port, ...]] = ('n', 's', 'e', 'w', 'nw', 'sw', 'se', 'ne')
-SYMBOL_TO_SUBSCRIPT: Final[Mapping[str, str]] = dict(zip('0123456789-', '₀₁₂₃₄₅₆₇₈₉₋'))
+SYMBOL_TO_SUBSCRIPT: Final[Mapping[str, str]] = dict(zip('0123456789-', '₀₁₂₃₄₅₆₇₈₉₋')) | \
+    {"a": "ᵃ", "b": "ᵇ", "c": "ᶜ", "d": "ᵈ", "e": "ᵉ", "f": "ᶠ", "g": "ᵍ",
+     "h": "ʰ", "i": "ⁱ", "j": "ʲ", "k": "ᵏ", "l": "ˡ", "m": "ᵐ", "n": "ⁿ",
+     "o": "ᵒ", "p": "ᵖ", "q": "q", "r": "ʳ", "s": "ˢ", "t": "ᵗ", "u": "ᵘ",
+     "v": "ᵛ", "w": "ʷ", "x": "ˣ", "y": "ʸ", "z": "ᶻ",
+     "A": "ᴬ", "B": "ᴮ", "C": "C", "D": "ᴰ", "E": "ᴱ", "F": "F", "G": "G",
+     "H": "ᴴ", "I": "ᴵ", "J": "J", "K": "ᴷ", "L": "ᴸ", "M": "ᴹ", "N": "ᴺ",
+     "O": "ᴼ", "P": "ᴾ", "Q": "Q", "R": "ᴿ", "S": "S", "T": "ᵀ", "U": "ᵁ",
+     "V": "ⱽ", "W": "ᵂ", "X": "X", "Y": "Y", "Z": "Z"}
+
 
 LOG: Final[Logger] = getLogger(__package__)
 
@@ -322,7 +331,6 @@ def _draw_states(state_names: Tuple[str, ...],
     return graph
 
 
-
 def _draw_transitions(graph: Digraph,
                       wfsa: WFSA,
                       state_names: Tuple[str, ...],
@@ -397,11 +405,11 @@ def _draw_transitions(graph: Digraph,
     return graph
 
 
-
 def _simplify_weight(weight: float) -> float:
     rounded: float = round(float(weight), 2)
 
     return 0 if abs(rounded) < 1e-6 else rounded
+
 
 def _compute_state_names(initial: NDArray, transits: Tuple[NDArray, ...]) -> Tuple[str, ...]:
     """
@@ -474,7 +482,7 @@ def num_to_subs(num: float | int | str) -> str:
     Returns:
         str: subscript format of the number or the number itself if there's no subscript equivalent.
     """
-    return ''.join(SYMBOL_TO_SUBSCRIPT.get(digit, digit) for digit in str(num))
+    return ''.join(SYMBOL_TO_SUBSCRIPT.get(digit.lower(), digit) for digit in str(num))
 
 
 def _non_zero(weight: float) -> bool:
@@ -492,6 +500,9 @@ def _in_node_box(state: str, weight: float) -> str:
 
 
 def _in_edge_box(symbols: Tuple[str, ...], weights: Tuple[str, ...]) -> str:
+
+    symbols, weights = zip(* [(symbol, weight) for symbol, weight in zip(symbols, weights) if weight])
+
     label: str = ''.join(f'<TD BORDER="1" BGCOLOR="white" COLOR="#f0f0f0" VALIGN="middle">{symbol}'
                          f'<sub>&thinsp;{weight}</sub></TD>' if weight is not None else
                          f'<TD BORDER="1" BGCOLOR="white" COLOR="#f0f0f0" VALIGN="middle">{symbol}</TD>'

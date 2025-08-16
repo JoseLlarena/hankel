@@ -151,7 +151,7 @@ def grid_search(kind: Kind,
 
     # (tensor) datasets are needed for evaluation only, not for training
     x_coder: Coder[X] = one_hot_coder_from(x_vocab)
-    y_coder: Coder[Y] = one_hot_coder_from(y_vocab) if kind == 'binary' else polar_coder_from(y_vocab)
+    y_coder: Coder[Y]|None = None if kind=='lm' else polar_coder_from(y_vocab) if kind == 'polar' else one_hot_coder_from(y_vocab)
 
     t_dataset, train_xs, train_ys = _prepare_data(t_data, x_coder, y_coder, kind)
     v_dataset, *_ = _prepare_data(v_data, x_coder, y_coder, kind)
@@ -171,7 +171,7 @@ def grid_search(kind: Kind,
     for run,  spec in enumerate(specs, start=1):
         wfsa: WFSA = _make_wfsa(*learn_wfsa(kind, train_xs, train_ys, **_learn_args(spec)), kind, unweighted, quant)
 
-        t_loss_fn, v_loss_fn, tern_tol = _eval_args(spec)
+        t_loss_fn, v_loss_fn, tern_tol = _evaluation_args(spec)
         t_loss, v_loss, ternariness = _compute_metrics(wfsa, t_dataset, v_dataset, t_loss_fn, v_loss_fn, kind, tern_tol)
 
         if not run % period or run == 1:
@@ -207,7 +207,10 @@ def grid_search(kind: Kind,
     return best_wfsa, best_t_loss, best_v_loss, e_loss, best_spec
 
 
-def _prepare_data(data: Sequence[Tuple[Sequence[X], Y] | Sequence[X]], x_coder: Coder[X], y_coder: Coder[Y], kind: Kind) \
+def _prepare_data(data: Sequence[Tuple[Sequence[X], Y] | Sequence[X]], 
+                  x_coder: Coder[X], 
+                  y_coder: Coder[Y] | None, 
+                  kind: Kind) \
     -> Tuple[Tuple[Sequence[NDArray], Sequence[NDArray]] | Iterable[NDArray],
              Sequence[Sequence[X]],
              Tuple[float, ...],]:
@@ -237,8 +240,7 @@ def _compute_metrics(wfsa: WFSA, t_dataset, v_dataset, t_loss_fn, v_loss_fn, kin
 
     v_loss: float = score(wfsa, v_dataset, ppl=v_loss_fn == ppl) if kind == 'lm' else \
         evaluate(wfsa, *v_dataset, v_loss_fn)
-    v_loss = t_loss
-
+    
     return t_loss, v_loss, avg_ternariness_of(wfsa.parameters, tern_tol)
 
 
@@ -259,7 +261,7 @@ def _learn_args(spec: Dict[str, Any]) -> Dict[str, Any]:
     return dict(basis_kwargs=basis_kwargs, factor_kwargs=factor_kwargs)
 
 
-def _eval_args(spec: Dict[str, Any]) -> Tuple[Fn, Fn, float]:
+def _evaluation_args(spec: Dict[str, Any]) -> Tuple[Fn, Fn, float]:
     tern_tol: float = spec.get('tern_tol', 1e-2)
     t_loss_fn: str = spec['t_loss_fn'].replace('-', '_')
     v_loss_fn: str = spec['v_loss_fn'].replace('-', '_')
