@@ -16,10 +16,11 @@ from typing import Any, Dict, Final, Mapping, Tuple
 from click import BadParameter, Choice, File, FloatRange, IntRange, Path, argument, get_binary_stream, group, option
 from more_itertools import flatten
 from numpy import allclose, arange, eye, stack, zeros_like
+from numpy.linalg import matrix_power
 from numpy.typing import NDArray
 
 from hankel import CSVList, Fn, RangeOfSteppedPercentages, TripleSplit, config_logging, nout, validate_special_int
-from hankel.conversions import num_to_subs, wfsa_to_graphviz
+from hankel.conversions import num_to_subs, num_to_super, wfsa_to_graphviz
 from hankel.data import load_labelled_data, load_unlabelled_data, one_hot_coder_from, to_unlabelled_dataset
 from hankel.evaluation import class_predict, lm_predict
 from hankel.hp_search import grid_search
@@ -142,7 +143,8 @@ SPEC_TEMPLATE: Final[Template] = Template('\n\tBest run:\n\n'
                                           '\tbasis selection\t= ${basis_algo}\n'
                                           '\ttop-k affix\t= ${topk}\n'
                                           '\ttop-k prefix\t= ${topk_pref}\n'
-                                          '\ttop-k suffix\t= ${topk_suff}\n')
+                                          '\ttop-k suffix\t= ${topk_suff}\n'
+                                          '\tdim.\t\t= ${dim}\n')
 
 
 @group()
@@ -290,9 +292,10 @@ def learn(infile: str,
                                           topk=spec.get('topk', 'N/A'),
                                           topk_pref=spec.get('topk_prefix', 'N/A'),
                                           topk_suff=spec.get('topk_suffix', 'N/A'),
-                                          ternariness=f'{spec["ternariness"]:.1f}'))
-        metadata: Dict[str, Any] = dict(loss=v_loss,
-                                        basis=spec['basis_algo'],
+                                          ternariness=f'{spec["ternariness"]:.1f}',
+                                          dim=wfsa.initial.shape[0]))
+
+        metadata: Dict[str, Any] = dict(basis=spec['basis_algo'],
                                         t_loss=t_loss,
                                         v_loss=v_loss,
                                         e_loss=e_loss,
@@ -306,10 +309,10 @@ def learn(infile: str,
         if spec['basis_algo'] == 'all':
             pass
         elif spec['basis_algo'] == 'pmi':
-            metadata['topk'] = spec['topk']
+            metadata['topk'] = float(spec['topk'])
         else:
-            metadata['topk_pref'] = spec['topk_pref']
-            metadata['topk_suff'] = spec['topk_suff']
+            metadata['topk_pref'] = float(spec['topk_pref'])
+            metadata['topk_suff'] = float(spec['topk_suff'])
 
         out = get_binary_stream('stdout') if not model else model
         LOG.info(f'Saving WFSA to [{out.name}]...')
@@ -357,7 +360,7 @@ def predict(infile: str, model: str, output: Tuple[str, ...], sort: bool,  verbo
     wfsa, metadata = load_wfsa(model)
 
     data: Iterable[Tuple[str, ...]] = tuple(load_unlabelled_data(infile))
-    x_vocab: Tuple[str, ...] = tuple(sorted(set(flatten(data))))
+    x_vocab: Tuple[str, ...] = tuple(sorted(metadata['vocab']))
     dataset: Iterable[NDArray] = tuple(to_unlabelled_dataset(data, one_hot_coder_from(x_vocab)))
 
     format_: str
@@ -460,37 +463,47 @@ def show(model: str | BufferedReader | None, output: Tuple[str, ...], verbose: b
                 nout(wfsa.final, fracs=fracs, row_hs=['ω'], indent=2)
                 print('\n')
 
-                nout(stack(wfsa.trans_mats), fracs=fracs, tube_hs=tuple(f'A{num_to_subs(s)}' for s in vocab), indent=2)
+                nout(stack(wfsa.trans_mats), fracs=fracs, tube_hs=tuple(f'A{num_to_super(s)}' for s in vocab), indent=2)
 
                 print('PERIODICITY OF TRANSITION MATRICES\n')
                 for s, m in zip(vocab, wfsa.trans_mats):
                     kind: str = 'Non-periodic'
-                    m2: NDArray = m @ m
 
-                    if allclose(m, zeros_like(m), rtol=0, atol=1e-4):
-                        kind = 'Null:        M = 0'
-                    elif allclose(m2, zeros_like(m), rtol=0, atol=1e-4):
-                        kind = 'Nilpotent index 2: MM = 0'
-                    elif allclose(m2@m, zeros_like(m), rtol=0, atol=1e-4):
-                        kind = 'Nilpotent index 3: MMM = 0, MM != 0'
-                    elif allclose(m, eye(m.shape[0]), rtol=0, atol=1e-4):
-                        kind = 'Identity:    M = I'
-                    elif allclose(m2, eye(m.shape[0]), rtol=0, atol=1e-4):
-                        kind = 'Involutory: MM = I, M != I'
-                    elif allclose(m2@m, eye(m.shape[0]), rtol=0, atol=1e-4):
-                        kind = '3rd power of Identity\t: MMM = I, MM != I, M != I'
-                    elif allclose(m2@m2, eye(m.shape[0]), rtol=0, atol=1e-4):
-                        kind = '4th power of Identity\t: MMMM = I, MMM != I, MM != I, M != I'
-                    elif allclose(m2, m, rtol=0, atol=1e-4):
-                        kind = 'Idempotent: MM = M'
-                    elif allclose(m2@m, m, rtol=0, atol=1e-4):
-                        kind = 'Tripotent: MMM = M, MM != M'
-                    elif allclose(m2@m, m2, rtol=0, atol=1e-4):
-                        kind = 'Idempotent index 2: MMM = MM, MM != M'
-                    elif allclose(m2@m2, m2@m, rtol=0, atol=1e-4):
-                        kind = 'Idempotent index 3: MMMM = MMM, MMM != M, MM != M'
+                    m_power: NDArray = m
+                    for power in range(1, 11):
+                        m_power @= m
 
-                    print(f'A{num_to_subs(s)}  {kind}')
+                        if allclose(m_power, zeros_like(m), rtol=0, atol=1e-5):
+                            kind = (f'Null: M = 0' if power == 1 else
+                                    f'Nilpotent index {power}: M{num_to_super(power)} = 0')
+                            break
+
+                        if allclose(m_power, eye(m.shape[0]), rtol=0, atol=1e-5):
+                            match power:
+                                case 1:
+                                    kind = 'Identity:    M = I'
+                                case 2:
+                                    kind = f'Involutory: M{num_to_super(2)} = I, M != I'
+                                case _:
+                                    kind = f'{power}{"rd" if power == 3 else "th"} power of Identity\t: M{num_to_super(power)} = I, M{num_to_super(power-1)} != I'
+                            break
+
+                        if power >= 2 and allclose(m_power, m, rtol=0, atol=1e-5):
+                            match power:
+                                case 2:
+                                    kind = f'Idempotent: M{num_to_super(2)} = M'
+                                case 3:
+                                    kind = f'Tripotent: M{num_to_super(3)} = M, M{num_to_super(2)} != M'
+                                case _:
+                                    kind = f'{power}-potent: M{num_to_super(power)} = M, M{num_to_super(power-1)} != M'
+                            
+                            break
+
+                        if allclose(m_power, matrix_power(m, power-1), rtol=0, atol=1e-5):
+                            kind = f'Idempotent index {power}: M{num_to_super(power)} = M{num_to_super(power-1)}'
+                            break
+
+                    print(f'A{num_to_super(s)}  {kind}')
 
                 print('\n')
 

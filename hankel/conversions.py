@@ -22,16 +22,25 @@ from hankel.models import WFSA
 Port: TypeAlias = Literal['n', 's', 'e', 'w', 'nw', 'sw', 'se', 'ne']
 
 ALL_PORTS: Final[Tuple[Port, ...]] = ('n', 's', 'e', 'w', 'nw', 'sw', 'se', 'ne')
-SYMBOL_TO_SUBSCRIPT: Final[Mapping[str, str]] = dict(zip('0123456789-', '₀₁₂₃₄₅₆₇₈₉₋')) | \
-    {"a": "ᵃ", "b": "ᵇ", "c": "ᶜ", "d": "ᵈ", "e": "ᵉ", "f": "ᶠ", "g": "ᵍ",
-     "h": "ʰ", "i": "ⁱ", "j": "ʲ", "k": "ᵏ", "l": "ˡ", "m": "ᵐ", "n": "ⁿ",
-     "o": "ᵒ", "p": "ᵖ", "q": "q", "r": "ʳ", "s": "ˢ", "t": "ᵗ", "u": "ᵘ",
-     "v": "ᵛ", "w": "ʷ", "x": "ˣ", "y": "ʸ", "z": "ᶻ",
-     "A": "ᴬ", "B": "ᴮ", "C": "C", "D": "ᴰ", "E": "ᴱ", "F": "F", "G": "G",
-     "H": "ᴴ", "I": "ᴵ", "J": "J", "K": "ᴷ", "L": "ᴸ", "M": "ᴹ", "N": "ᴺ",
-     "O": "ᴼ", "P": "ᴾ", "Q": "Q", "R": "ᴿ", "S": "S", "T": "ᵀ", "U": "ᵁ",
-     "V": "ⱽ", "W": "ᵂ", "X": "X", "Y": "Y", "Z": "Z"}
-
+SYMBOL_TO_SUBSCRIPT: Final[Mapping[str, str]] = dict(zip('0123456789-', '₀₁₂₃₄₅₆₇₈₉₋')) 
+SYMBOL_TO_SUPERSCRIPT: Final[Mapping[str, str]] = {"0": "⁰",
+                                                   "1": "¹",
+                                                   "2": "²",
+                                                   "3": "³",
+                                                   "4": "⁴",
+                                                   "5": "⁵",
+                                                   "6": "⁶",
+                                                   "7": "⁷",
+                                                   "8": "⁸",
+                                                   "9": "⁹",
+                                                   "a": "ᵃ", "b": "ᵇ", "c": "ᶜ", "d": "ᵈ", "e": "ᵉ", "f": "ᶠ", "g": "ᵍ",
+                                                   "h": "ʰ", "i": "ⁱ", "j": "ʲ", "k": "ᵏ", "l": "ˡ", "m": "ᵐ", "n": "ⁿ",
+                                                   "o": "ᵒ", "p": "ᵖ", "q": "q", "r": "ʳ", "s": "ˢ", "t": "ᵗ", "u": "ᵘ",
+                                                   "v": "ᵛ", "w": "ʷ", "x": "ˣ", "y": "ʸ", "z": "ᶻ",
+                                                   "A": "ᴬ", "B": "ᴮ", "C": "ᶜ", "D": "ᴰ", "E": "ᴱ", "F": "ᶠ", "G": "ᵍ",
+                                                   "H": "ᴴ", "I": "ᴵ", "J": "ʲ", "K": "ᴷ", "L": "ᴸ", "M": "ᴹ", "N": "ᴺ",
+                                                   "O": "ᴼ", "P": "ᴾ", "Q": "q", "R": "ᴿ", "S": "ˢ", "T": "ᵀ", "U": "ᵁ",
+                                                   "V": "ⱽ", "W": "ᵂ", "X": "ˣ", "Y": "ʸ", "Z": "ᶻ"}
 
 LOG: Final[Logger] = getLogger(__package__)
 
@@ -482,7 +491,20 @@ def num_to_subs(num: float | int | str) -> str:
     Returns:
         str: subscript format of the number or the number itself if there's no subscript equivalent.
     """
-    return ''.join(SYMBOL_TO_SUBSCRIPT.get(digit.lower(), digit) for digit in str(num))
+    return ''.join(SYMBOL_TO_SUBSCRIPT.get(digit, digit) for digit in str(num))
+
+def num_to_super(num: float | int | str) -> str:
+    """
+    Converts a number into a superscript string representation
+
+    Args:
+        num (float | int | str): number to convert.
+
+    Returns:
+        str: superscript format of the number or the number itself if there's no superscript equivalent.
+    """
+    return ''.join(SYMBOL_TO_SUPERSCRIPT.get(digit, SYMBOL_TO_SUPERSCRIPT.get(digit.lower(), digit)) for digit in str(num))
+
 
 
 def _non_zero(weight: float) -> bool:

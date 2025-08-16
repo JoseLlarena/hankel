@@ -4,7 +4,6 @@ Functions to learn Weighted Finite State Automata using the Spectral method
 from __future__ import annotations
 
 from collections import Counter, defaultdict
-from http.client import PRECONDITION_FAILED
 from itertools import product
 from logging import DEBUG, Logger, getLogger
 from operator import concat
@@ -14,14 +13,14 @@ from warnings import filterwarnings
 import deal
 from more_itertools import flatten
 from numpy import diag, float32, full, stack
-from scipy.linalg import pinv, svd
 from numpy.linalg import matrix_rank
 from numpy.typing import NDArray
 from pydantic import validate_call
+from scipy.linalg import pinv, svd
 from sklearn.decomposition import NMF
 from sklearn.exceptions import ConvergenceWarning
 
-from hankel import PYDANTIC_CONFIG, Fn,  px, hankel_out
+from hankel import PYDANTIC_CONFIG, Fn, hankel_out, px
 from hankel._bases import by_all_affixes, by_freq, by_length, by_split_pmi
 
 T = TypeVar('T')
@@ -133,7 +132,7 @@ def estimate_targets(data: Iterable[Sequence[T]], kind: Kind) -> Mapping[Sequenc
     default: Fn = px(float, -1 if kind == 'polar' else 0 if kind == 'binary' else MIN_PROB)
     counts: Counter[Sequence[T]] = Counter(data)
     seq_to_value: Mapping[Sequence[T], float]
-    
+
     match kind:
         case 'lm':  # implements delta smoothing
             den: float = counts.total() + len(counts)*MIN_PROB
@@ -198,7 +197,7 @@ def estimate_parameters(hankel: NDArray, dim: int = -1, sv_ratio: float = 1e-1, 
         Tuple[NDArray, NDArray, NDArray]: a 3-tuple with the initial, transition and final weights of the learned WFSA,
             of sizes D, VxDxD and D.
     """
-   
+
     complete_block: NDArray = hankel[0]  # VxP'xS -> P'xS
     first_row: NDArray = complete_block[0, :]  # P'xS -> S
     first_col: NDArray = complete_block[:, 0]  # P'xS -> P'
@@ -265,7 +264,7 @@ def svd_of(matrix: NDArray, dim: int = -1, sv_ratio: float = 0.) -> Tuple[NDArra
     Returns:
         Tuple[NDArray, NDArray, NDArray]: a 3-tuple containing the U, S and Vt factors of the SVD decomposition, with
             shapes PxD, DxD, DxS.
-    """    
+    """
 
     U, s, Vt = svd(matrix, full_matrices=False)  # PxS -> PxR, R, RxS
     if dim == -1:
@@ -311,8 +310,8 @@ def nmf_of(matrix: NDArray,
 
     Returns:
         Tuple[NDArray, NDArray]: Encoder and decoder matrices such that matrix ~ encoder @ decoder.
-    """   
-    
+    """
+
     if init == 'svd':
         U, S, Vt = svd_of(matrix, dim=dim, sv_ratio=sv_ratio)  # PxS -> PxD, DxD, DxS
         S = S**.5

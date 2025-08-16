@@ -315,10 +315,10 @@ def load_labelled_data(path: str) -> Iterable[Tuple[Tuple[str, ...], str]]:
 
     with open(path, 'r', encoding='utf8') as f:
 
-        for line in f:  # FIXME USE csv MODULE
+        for idx, line in enumerate(f):  # FIXME USE csv MODULE
             seq_target: List[str] = line.rstrip().split('\t')
             if len(seq_target) != 2:
-                raise ValueError(f"Row [{line}] should be two tab-separated columns")
+                raise ValueError(f"Row [{idx}],  [{line}] should be two tab-separated columns")
 
             seq, target = seq_target
             if target not in tuple('01'):
