@@ -283,15 +283,14 @@ def learn(infile: str,
                                                          period=log,
                                                          unweighted=unweighted,
                                                          quant=quant)
-
         LOG.info(SPEC_TEMPLATE.substitute(t_loss=f'{t_loss:.2e}',
                                           v_loss=f'{v_loss:.2e}',
                                           e_loss=f'{e_loss:.2e}' if e_loss is not None else '---',
                                           basis_algo=spec['basis_algo'],
                                           run=spec['run'],
                                           topk=spec.get('topk', 'N/A'),
-                                          topk_pref=spec.get('topk_prefix', 'N/A'),
-                                          topk_suff=spec.get('topk_suffix', 'N/A'),
+                                          topk_pref=spec.get('topk_pref', 'N/A'),
+                                          topk_suff=spec.get('topk_suff', 'N/A'),
                                           ternariness=f'{spec["ternariness"]:.1f}',
                                           dim=wfsa.initial.shape[0]))
 
@@ -544,10 +543,10 @@ def _extract_data(infile: str, kind: str, splits: Tuple[int, int, int], extra_to
     t, v, e = (int(len(data) * split / 100) for split in splits)
     # if no validation split is provided, it uses training data instead
     # acceptors' training set is added to the validation set to improve performance, especially with small datasets
-    t_data = data[:t] if v and e else data  # all data is used for training when no validation or test data
+    t_data = data[:t] if (v or e) else data  # all data is used for training when no validation or test data
     v_data = data[(t if kind == 'lm' and v else 0): t + v]  # if validation split is 0, it uses training data instead
     e_data = data[t+v:] if e else ()  # ensures 0 split is honoured
-
+    
     return t_data, v_data, e_data, tuple(sorted(x_vocab)), tuple(sorted(y_vocab))
 
 
