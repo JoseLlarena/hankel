@@ -476,7 +476,8 @@ def show(model: str | BufferedReader | None, output: Tuple[str, ...], verbose: b
 
                         if allclose(m_power, zeroes, rtol=0, atol=1e-5):
                             kind = (f'Null: M = 0' if power == 1 else
-                                    f'Nilpotent index {power}: M{num_to_super(power)} = 0')
+                                    f'Nilpotent index {power}: M{num_to_super(power)} = 0, '
+                                    f'M{num_to_super(power-1)} ≠ 0')
                             break
 
                         if allclose(m_power, identity, rtol=0, atol=1e-5):
@@ -484,10 +485,10 @@ def show(model: str | BufferedReader | None, output: Tuple[str, ...], verbose: b
                                 case 1:
                                     kind = 'Identity:    M = I'
                                 case 2:
-                                    kind = f'Involutory: M{num_to_super(2)} = I, M != I'
+                                    kind = f'Involutory: M{num_to_super(2)} = I, M ≠ I'
                                 case _:
                                     kind = f'{power}{"rd" if power == 3 else "th"} power of Identity\t'
-                                    f': M{num_to_super(power)} = I, M{num_to_super(power-1)} != I'
+                                    f': M{num_to_super(power)} = I, M{num_to_super(power-1)} ≠ I'
                             break
 
                         if power >= 2 and allclose(m_power, m, rtol=0, atol=1e-5):
@@ -495,14 +496,15 @@ def show(model: str | BufferedReader | None, output: Tuple[str, ...], verbose: b
                                 case 2:
                                     kind = f'Idempotent: M{num_to_super(2)} = M'
                                 case 3:
-                                    kind = f'Tripotent: M{num_to_super(3)} = M, M{num_to_super(2)} != M'
+                                    kind = f'Tripotent: M{num_to_super(3)} = M, M{num_to_super(2)} ≠ M'
                                 case _:
-                                    kind = f'{power}-potent: M{num_to_super(power)} = M, M{num_to_super(power-1)} != M'
+                                    kind = f'{power}-potent: M{num_to_super(power)} = M, M{num_to_super(power-1)} ≠ M'
 
                             break
 
                         if allclose(m_power, matrix_power(m, power-1), rtol=0, atol=1e-5):
-                            kind = f'Idempotent index {power}: M{num_to_super(power)} = M{num_to_super(power-1)}'
+                            kind = (f'Idempotent index {power}: M{num_to_super(power)} = M{num_to_super(power-1)}, '
+                                    f'M{num_to_super(power-1)} ≠ M{num_to_super(power-2)}')
                             break
 
                     print(f'A{num_to_super(s)}  {kind}')
