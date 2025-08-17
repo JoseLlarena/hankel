@@ -465,26 +465,29 @@ def show(model: str | BufferedReader | None, output: Tuple[str, ...], verbose: b
                 nout(stack(wfsa.trans_mats), fracs=fracs, tube_hs=tuple(f'A{num_to_super(s)}' for s in vocab), indent=2)
 
                 print('PERIODICITY OF TRANSITION MATRICES\n')
+                zeroes: NDArray = zeros_like(wfsa.trans_mats[0])
+                identity: NDArray = eye(wfsa.trans_mats[0].shape[0])
                 for s, m in zip(vocab, wfsa.trans_mats):
                     kind: str = 'Non-periodic'
 
-                    m_power: NDArray = m
+                    m_power: NDArray = identity
                     for power in range(1, 11):
-                        m_power @= m
+                        m_power = m @ m_power
 
-                        if allclose(m_power, zeros_like(m), rtol=0, atol=1e-5):
+                        if allclose(m_power, zeroes, rtol=0, atol=1e-5):
                             kind = (f'Null: M = 0' if power == 1 else
                                     f'Nilpotent index {power}: M{num_to_super(power)} = 0')
                             break
 
-                        if allclose(m_power, eye(m.shape[0]), rtol=0, atol=1e-5):
+                        if allclose(m_power, identity, rtol=0, atol=1e-5):
                             match power:
                                 case 1:
                                     kind = 'Identity:    M = I'
                                 case 2:
                                     kind = f'Involutory: M{num_to_super(2)} = I, M != I'
                                 case _:
-                                    kind = f'{power}{"rd" if power == 3 else "th"} power of Identity\t: M{num_to_super(power)} = I, M{num_to_super(power-1)} != I'
+                                    kind = f'{power}{"rd" if power == 3 else "th"} power of Identity\t'
+                                    f': M{num_to_super(power)} = I, M{num_to_super(power-1)} != I'
                             break
 
                         if power >= 2 and allclose(m_power, m, rtol=0, atol=1e-5):
@@ -495,7 +498,7 @@ def show(model: str | BufferedReader | None, output: Tuple[str, ...], verbose: b
                                     kind = f'Tripotent: M{num_to_super(3)} = M, M{num_to_super(2)} != M'
                                 case _:
                                     kind = f'{power}-potent: M{num_to_super(power)} = M, M{num_to_super(power-1)} != M'
-                            
+
                             break
 
                         if allclose(m_power, matrix_power(m, power-1), rtol=0, atol=1e-5):
@@ -546,7 +549,7 @@ def _extract_data(infile: str, kind: str, splits: Tuple[int, int, int], extra_to
     t_data = data[:t] if (v or e) else data  # all data is used for training when no validation or test data
     v_data = data[(t if kind == 'lm' and v else 0): t + v]  # if validation split is 0, it uses training data instead
     e_data = data[t+v:] if e else ()  # ensures 0 split is honoured
-    
+
     return t_data, v_data, e_data, tuple(sorted(x_vocab)), tuple(sorted(y_vocab))
 
 
