@@ -6,6 +6,7 @@ from collections.abc import Iterable, Mapping, Sequence, Set
 from itertools import product
 from logging import Logger, getLogger
 from math import atan2, degrees, log2
+from random import sample
 from typing import Deque, Dict, Final, FrozenSet, List, Literal, Mapping, Sequence, Set, Tuple, TypeAlias
 
 import deal
@@ -22,7 +23,7 @@ from hankel.models import WFSA
 Port: TypeAlias = Literal['n', 's', 'e', 'w', 'nw', 'sw', 'se', 'ne']
 
 ALL_PORTS: Final[Tuple[Port, ...]] = ('n', 's', 'e', 'w', 'nw', 'sw', 'se', 'ne')
-SYMBOL_TO_SUBSCRIPT: Final[Mapping[str, str]] = dict(zip('0123456789-', '₀₁₂₃₄₅₆₇₈₉₋')) 
+SYMBOL_TO_SUBSCRIPT: Final[Mapping[str, str]] = dict(zip('0123456789-', '₀₁₂₃₄₅₆₇₈₉₋'))
 SYMBOL_TO_SUPERSCRIPT: Final[Mapping[str, str]] = {"0": "⁰",
                                                    "1": "¹",
                                                    "2": "²",
@@ -101,10 +102,10 @@ def as_unweighted(initial: NDArray, transitions: NDArray, final: NDArray, length
         Tuple[NDArray, NDArray, NDArray]: Parameters of the FSA corresponding to the given WFSA.
     """
     symbols: Sequence[int] = tuple(range(transitions.shape[0]))
-    length = int(6/log2(len(symbols))) if length == -1 else length  # hack fixing number of probing points to <= 2**6
-    combo: Iterable[Tuple[int, ...]] = tuple(product(symbols, repeat=length))
-    LOG.debug(f'Converting WFSA to unweighted with length {length} and precision {quant} = {len(combo)} combinations')
-    batch: NDArray = stack(tuple(tuple(eye(len(symbols), dtype=int)[idx] for idx in seq) for seq in combo))
+    length = min(len(symbols)*2, 16) if length == -1 else length  # heuristic that works with smaller vocabs/datasets
+    combos: Tuple[Tuple[int, ...], ...] = tuple(tuple(sample(symbols*2, length)) for _ in range(512))
+    LOG.debug(f'Converting WFSA to unweighted with length {length} and precision {quant}, {len(combos)} combinations')
+    batch: NDArray = stack(tuple(tuple(eye(len(symbols), dtype=int)[idx] for idx in seq) for seq in combos))
 
     recs: FrozenSet[Tuple[Tuple[float, ...], int, Tuple[float, ...], int]] = \
         _sample_transitions(initial, transitions, final, batch, quant)
@@ -372,7 +373,7 @@ def _draw_transitions(graph: Digraph,
         for from_state in range(num_states):
             for to_state in range(num_states):
                 weight: float = transitions[to_state, from_state]
-                if _non_zero(weight) or not unweighted:
+                if _non_zero(weight):
                     trans_to_symbolweights[from_state, to_state].append((symbol, weight))
 
     # Draws the standard transitions
@@ -417,7 +418,7 @@ def _draw_transitions(graph: Digraph,
 def _simplify_weight(weight: float) -> float:
     rounded: float = round(float(weight), 2)
 
-    return 0 if abs(rounded) < 1e-6 else rounded
+    return 0 if abs(rounded) < 1e-9 else rounded
 
 
 def _compute_state_names(initial: NDArray, transits: Tuple[NDArray, ...]) -> Tuple[str, ...]:
@@ -449,7 +450,7 @@ def _compute_state_names(initial: NDArray, transits: Tuple[NDArray, ...]) -> Tup
         transitions: NDArray = transits[symbol_idx]
         for from_state in range(num_states):
             for to_state in range(num_states):
-                if abs(transitions[to_state, from_state]) > 1e-6:
+                if abs(transitions[to_state, from_state]) >= 1e-9:
                     state_to_adjacents[from_state].append(to_state)
 
     # Step 2: BFS to determine naming order
@@ -493,6 +494,7 @@ def num_to_subs(num: float | int | str) -> str:
     """
     return ''.join(SYMBOL_TO_SUBSCRIPT.get(digit, digit) for digit in str(num))
 
+
 def num_to_super(num: float | int | str) -> str:
     """
     Converts a number into a superscript string representation
@@ -506,12 +508,11 @@ def num_to_super(num: float | int | str) -> str:
     return ''.join(SYMBOL_TO_SUPERSCRIPT.get(digit, SYMBOL_TO_SUPERSCRIPT.get(digit.lower(), digit)) for digit in str(num))
 
 
-
 def _non_zero(weight: float) -> bool:
     """
     Checks if a weight is non-zero within a small tolerance.
     """
-    return abs(weight) > 1e-6
+    return abs(weight) > 1e-9
 
 
 def _in_node_box(state: str, weight: float) -> str:
@@ -521,9 +522,12 @@ def _in_node_box(state: str, weight: float) -> str:
                 </TABLE>>"""
 
 
-def _in_edge_box(symbols: Tuple[str, ...], weights: Tuple[str, ...]) -> str:
+def _in_edge_box(symbols: Tuple[str, ...], weights: Tuple[float, ...]) -> str:
 
-    symbols, weights = zip(* [(symbol, weight) for symbol, weight in zip(symbols, weights) if weight])
+    if set(weights) == {0}:
+        return ''
+
+    symbols, weights = zip(* [(symbol, weight) for symbol, weight in zip(symbols, weights) if weight != 0])
 
     label: str = ''.join(f'<TD BORDER="1" BGCOLOR="white" COLOR="#f0f0f0" VALIGN="middle">{symbol}'
                          f'<sub>&thinsp;{weight}</sub></TD>' if weight is not None else
@@ -543,7 +547,7 @@ def _find_node_positions(graph: Digraph) -> Mapping[str, Tuple[float, float]]:
         graph (Digraph): The graph.
 
     Returns:
-        Mapping[str, Tuple[float, float]]: A map from state names to theyr x-y coordinates.
+        Mapping[str, Tuple[float, float]]: A map from state names to their x-y coordinates.
     """
 
     plain_output: str = graph.pipe(format='plain').decode('utf-8')
