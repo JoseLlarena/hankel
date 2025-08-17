@@ -79,7 +79,11 @@ LOG: Final[Logger] = config_logging(getLogger(__package__), sparse=True)
 
 
 @validate_call(config=PYDANTIC_CONFIG, validate_return=True)
-def hankel_out(hankel: NDArray, prefs: Sequence[Tuple[str, ...]], suffs: Sequence[Tuple[str, ...]], fracs: int = 6) -> str:
+def hankel_out(hankel: NDArray, 
+               prefs: Sequence[Tuple[str, ...]], 
+               suffs: Sequence[Tuple[str, ...]], 
+               ints:int = 2,
+               fracs: int = 1) -> str:
     """
     Returns a string representation of the Hankel matrix
 
@@ -92,11 +96,12 @@ def hankel_out(hankel: NDArray, prefs: Sequence[Tuple[str, ...]], suffs: Sequenc
     Returns:
         str: A string represetation of the given Hankel matrix with prefixes and suffixes.
     """
-    return 'Hankel Matrix\n\n'+nout(hankel,  # V x R x S
+    return "Hankel Matrix's ϵ-block\n\n"+nout(hankel,  # V x R x S
                                     row_hs=[' '.join(p) if p else 'ϵ' for p in prefs[:hankel.shape[1]]],
                                     col_hs=[' '.join(s) if s else 'ϵ' for s in suffs],
                                     tube_hs=[' '.join(p) if p else 'ϵ' for p in prefs[:: hankel.shape[1]]],
                                     indent=-1,
+                                    ints=ints,
                                     fracs=fracs,
                                     console=False)
 

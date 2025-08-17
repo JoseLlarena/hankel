@@ -70,7 +70,7 @@ def learn_wfsa(kind: Kind,
     hankel: NDArray = fill_hankel(targets, prefs, suffs, default=-1. if kind == 'polar' else 0.)
     LOG.debug('Estimating parameters...')
     if LOG.level == DEBUG:
-        LOG.debug(hankel_out(hankel, prefs, suffs))
+        LOG.debug(hankel_out(hankel[:1], prefs, suffs))
     params: Tuple = estimate_parameters(hankel, **(DEFAULT_FACTOR_ARGS | (factor_kwargs or {})))
 
     return params
