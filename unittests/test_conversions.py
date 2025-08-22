@@ -49,8 +49,7 @@ def test_as_unweighted_returns_the_same_input_if_unweighted():
     initial, transitions, final = with_single_start(OR_WFSA.initial, OR_WFSA.transitions, OR_WFSA.final)
     unweighted = WFSA(*as_unweighted(initial, transitions, final, quant=2))
 
-    assert_allclose(unweighted(xs), XOR_WFSA(xs), rtol=0, atol=1e-3)
-
+    assert_allclose(unweighted(xs), OR_WFSA(xs), rtol=0, atol=1e-3)
 
 def test_with_single_start_returns_the_same_input_as_original():
 
