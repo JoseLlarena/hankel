@@ -1,3 +1,20 @@
+# [](https://github.com/JoseLlarena/hankel/compare/v0.3.0...v) (2025-08-22)
+
+
+### Bug Fixes
+
+* bug in unit test assertion ([873f376](https://github.com/JoseLlarena/hankel/commit/873f37635ef9f256101744081c6bbcbab0b331c8))
+
+
+### Features
+
+* add fail state flag ([047708c](https://github.com/JoseLlarena/hankel/commit/047708c11265e37ed1ac120f317c188091c1397b))
+* add script and data for reber grammar ([9f728da](https://github.com/JoseLlarena/hankel/commit/9f728da6f0a22f5b57974d48d00af41d8abdc244))
+* improve explanation of periodic matrices ([e8871bc](https://github.com/JoseLlarena/hankel/commit/e8871bcef9b7d447c649907132231ab9b2d3ecb8))
+* overhaul wfsa-to-fsa logic; style: formatting; feat: improve superscript mapping; feat: add fail_states flag to as_unweighted ([00c9353](https://github.com/JoseLlarena/hankel/commit/00c93533482ae66bce50011cc434780d8277d9cc))
+
+
+
 #  (2025-08-17)
 
 
