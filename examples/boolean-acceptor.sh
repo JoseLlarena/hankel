@@ -12,7 +12,7 @@ echo -e "\nTraining WFSA acceptor for "$DIR"bool_"$func"_labelled.txt...\n"
 python -m hankel.cli learn "$DIR"bool_"$func"_labelled.txt | tee "$DIR"bool_"$func"_wfsa.npz | python -m hankel.cli show -o cons,"$DIR"wfsa.png 
 
 echo -e "\nTraining FSA acceptor for "$DIR"bool_"$func"_labelled.txt...\n"
-python -m hankel.cli learn -u "$DIR"bool_"$func"_labelled.txt | tee "$DIR"bool_"$func"_fsa.npz | python -m hankel.cli show -o cons,"$DIR"fsa.png 
+python -m hankel.cli learn -u -fs "$DIR"bool_"$func"_labelled.txt | tee "$DIR"bool_"$func"_fsa.npz | python -m hankel.cli show -o cons,"$DIR"fsa.png 
 
 
 

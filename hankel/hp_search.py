@@ -91,6 +91,7 @@ def grid_search(kind: Kind,
                 stop_loss: float = 1e-6,
                 period: float = .1,
                 unweighted: bool = False,
+                fail_states: bool = True,
                 quant: int = 7,
                 **metadata) -> Tuple[WFSA, float, float, float | None, Dict[str, Any]]:
     """
@@ -134,6 +135,8 @@ def grid_search(kind: Kind,
         stop_loss (float, optional): The loss value that stops the gridsearch early. Defaults to 1e-6.
         period (float, optional): The logging period as a fraction of the total search runs. Defaults to .1.
         unweighted (bool, optional): `True` if an FSA should be returned, `False` for a WFSA. Defaults to `False`.
+        fail_states (bool, optional): `True` if the returned FSA should contain fail states, `False` otherwise. 
+            Defaults to `False`.
         quant (int, optional): The level of quantisation to pass to the function that extracts an FSA from the 
             learned WFSA. Ignored if `unweighted` is `False`. Defaults to 7.
         metadata: Extra data to print at the beggining of the gridsearch.
@@ -202,7 +205,8 @@ def grid_search(kind: Kind,
 
     if unweighted:
         best_wfsa = with_vector_output(
-            WFSA(*as_unweighted(best_wfsa.initial, best_wfsa.transitions, best_wfsa.final, quant)), kind == 'binary')
+            WFSA(*as_unweighted(best_wfsa.initial, best_wfsa.transitions, best_wfsa.final, quant, fail_states)), 
+                kind == 'binary')
         t_loss_fn, v_loss_fn, tern_tol = _evaluation_args(best_spec)
        
         best_t_loss, best_v_loss, best_ternariness = _compute_metrics(

@@ -13,19 +13,43 @@ from os.path import abspath
 from string import Template
 from typing import Any, Dict, Final, Mapping, Tuple
 
-from click import BadParameter, Choice, File, FloatRange, IntRange, Path, argument, get_binary_stream, group, option
-from more_itertools import flatten
+from click import (
+    BadParameter,
+    Choice,
+    File,
+    FloatRange,
+    IntRange,
+    Path,
+    argument,
+    get_binary_stream,
+    group,
+    option,
+)
 from numpy import allclose, arange, eye, stack, zeros_like
 from numpy.linalg import matrix_power
 from numpy.typing import NDArray
 
-from hankel import CSVList, Fn, RangeOfSteppedPercentages, TripleSplit, config_logging, nout, validate_special_int
-from hankel.conversions import num_to_subs, num_to_super, wfsa_to_graphviz
-from hankel.data import load_labelled_data, load_unlabelled_data, one_hot_coder_from, to_unlabelled_dataset
+from hankel import (
+    CSVList,
+    Fn,
+    RangeOfSteppedPercentages,
+    TripleSplit,
+    config_logging,
+    nout,
+    validate_special_int,
+)
+from hankel.conversions import num_to_super, wfsa_to_graphviz
+from hankel.data import (
+    load_labelled_data,
+    load_unlabelled_data,
+    one_hot_coder_from,
+    to_unlabelled_dataset,
+)
 from hankel.evaluation import class_predict, lm_predict
 from hankel.hp_search import grid_search
 from hankel.model_io import load_wfsa, save_wfsa
 from hankel.spectral import Kind
+
 LOG: Final[Logger] = getLogger(__package__)
 
 LEARN_HELP: Final[str] = """Learn a non-deterministic (Weighted) Finite State Automaton (W/FSA) using Spectral Learning.\n
@@ -88,12 +112,16 @@ LOG_HELP: Final[str] = """Fraction of the total number grid search runs to log p
 
 STOP_LOSS_HELP: Final[str] = """Value of the loss the grid search will stop at.
                                 """
-UNWEIGHTED_HELP: Final[str] = """Wether to return an unweighted FSA. This experimental and is not guaranteed to work.
+UNWEIGHTED_HELP: Final[str] = """Wether to return an unweighted FSA.
                                 Only valid when --kind is 'binary' or 'polar'"""
+FAIL_STATES_HELP: Final[str] = """Wether to keep fail states in the unweighted FSA. Some automata, e.g. Tomita 2, are
+                                conventionally represented with a fail state, whereas others, e.g. Reber, aren't. This
+                                flags helps choose which one is more appropriate. Ignored if --unweighted is not used.
+                                """
 QUANT_HELP: Final[str] = """The level of rounding precision to use when estimating an unweighted FSA. This estimation is
                             done by sampling and quantising the WFSA's embedding space. Lower values can merge distinct
                             states. Higher values can lead to spurious states. Ignored if --kind is 'lm' or --unweighted
-                            is False
+                            is not used.
                             """
 
 BASIS_HELP: Final[str] = """The type of basis selection algorithm to use:\n
@@ -163,6 +191,7 @@ def cli():
 @option('--log', default=.1, type=FloatRange(0, 1), show_default=True,  help=LOG_HELP)
 @option('--stop-loss', '-sl', default=1e-6, show_default=True, type=FloatRange(0), help=STOP_LOSS_HELP)
 @option('--unweighted', '-u',  is_flag=True, help=UNWEIGHTED_HELP)
+@option('--fail-states', '-fs',  is_flag=True, help=FAIL_STATES_HELP)
 @option('--quant', '-q', default=7, show_default=True,  type=IntRange(0), help=QUANT_HELP)
 @option('--basis', '-b', default='auto', show_default=True, type=Choice(BASES), help=BASIS_HELP)
 @option('--topk', '-t', type=RangeOfSteppedPercentages(), help=TOP_K_HELP)
@@ -179,6 +208,7 @@ def learn(infile: str,
           loss_fn: str,
           stop_loss: float,
           unweighted: bool,
+          fail_states:bool,
           quant: int,
           log: float,
           basis: str,
@@ -249,6 +279,7 @@ def learn(infile: str,
                                               loss_fn=loss_fn,
                                               stop_loss=stop_loss,
                                               unweighted=unweighted,
+                                              fail_states=fail_states,
                                               quant=quant,
                                               log=log,
                                               basis=basis,
@@ -282,6 +313,7 @@ def learn(infile: str,
                                                          stop_loss=stop_loss,
                                                          period=log,
                                                          unweighted=unweighted,
+                                                         fail_states=fail_states,
                                                          quant=quant)
         LOG.info(SPEC_TEMPLATE.substitute(t_loss=f'{t_loss:.2e}',
                                           v_loss=f'{v_loss:.2e}',
