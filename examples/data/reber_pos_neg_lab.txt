@@ -1,0 +1,1036 @@
+B P V V E	1
+V P V B E	0
+B T X S E	1
+S B T X E	0
+B P T V V E	1
+T V E V B P	0
+B P V P S E	1
+B V E S P P	0
+B T S X S E	1
+B S X S T E	0
+B P T T V V E	1
+P T B E V T V	0
+B P T V P S E	1
+P V B T S E P	0
+B T S S X S E	1
+T S E X S S B	0
+B T X X V V E	1
+V X B E X V T	0
+B P T T T V V E	1
+B V E P V T T T	0
+B P T T V P S E	1
+T T S P P V B E	0
+B P V P X V V E	1
+P X V E P B V V	0
+B T S S S X S E	1
+S S S S X T E B	0
+B T S X X V V E	1
+V T X E S V X B	0
+B T X X T V V E	1
+T V E V X T B X	0
+B T X X V P S E	1
+V B X X P E T S	0
+B P T T T T V V E	1
+E V T V B T T P T	0
+B P T T T V P S E	1
+P T T S T P E B V	0
+B P T V P X V V E	1
+V X P V P T B E V	0
+B P V P X T V V E	1
+V B V T X V P E P	0
+B P V P X V P S E	1
+P S P V P V B X E	0
+B T S S S S X S E	1
+B X S S S T S E S	0
+B T S S X X V V E	1
+X V B T V S S E X	0
+B T S X X T V V E	1
+T E S X X V B V T	0
+B T S X X V P S E	1
+S V E X S X T P B	0
+B T X X T T V V E	1
+V T X V X T E T B	0
+B T X X T V P S E	1
+T B T P V E S X X	0
+B P T T T T T V V E	1
+T V T E T P T B T V	0
+B P T T T T V P S E	1
+P S T T E B P T V T	0
+B P T T V P X V V E	1
+B V P X T T P E V V	0
+B P T V P X T V V E	1
+V P T X V T V E B P	0
+B P T V P X V P S E	1
+T P V P X P S E B V	0
+B P V P X T T V V E	1
+V P E X V T P T B V	0
+B P V P X T V P S E	1
+V T P B V X P P S E	0
+B T S S S S S X S E	1
+S E X B S S T S S S	0
+B T S S S X X V V E	1
+V T S V S X X E S B	0
+B T S S X X T V V E	1
+V T S V X T E B S X	0
+B T S S X X V P S E	1
+S X T V B X E P S S	0
+B T S X X T T V V E	1
+X S E V X B T V T T	0
+B T S X X T V P S E	1
+V E S P S T X T X B	0
+B T X X T T T V V E	1
+B X X T V V E T T T	0
+B T X X T T V P S E	1
+E T T X X B S P V T	0
+B T X X V P X V V E	1
+B X P V V T E V X X	0
+B P T T T T T T V V E	1
+T P T B T E T V T T V	0
+B P T T T T T V P S E	1
+T T T P T S T P B E V	0
+B P T T T V P X V V E	1
+X V T T P T P V E V B	0
+B P T T V P X T V V E	1
+V V T B X V T T P P E	0
+B P T T V P X V P S E	1
+P V P E T X V T B S P	0
+B P T V P X T T V V E	1
+T T P V B E V P T V X	0
+B P T V P X T V P S E	1
+V P X E B P T P T S V	0
+B P V P X T T T V V E	1
+V B P X E T V T P T V	0
+B P V P X T T V P S E	1
+T P S X E P V V B T P	0
+B P V P X V P X V V E	1
+V V X B V X E P V P P	0
+B T S S S S S S X S E	1
+S S S S S X B S S T E	0
+B T S S S S X X V V E	1
+S V T V S S B S E X X	0
+B T S S S X X T V V E	1
+T X V V S E S X T S B	0
+B T S S S X X V P S E	1
+V E X X B S S T P S S	0
+B T S S X X T T V V E	1
+B V X S E X T T T S V	0
+B T S S X X T V P S E	1
+B S P X X V S S T E T	0
+B T S X X T T T V V E	1
+X S V B T X T E T T V	0
+B T S X X T T V P S E	1
+S X T T E B S T P V X	0
+B T S X X V P X V V E	1
+T B V S X V X P X V E	0
+B T X X T T T T V V E	1
+V E T T T B T X V X T	0
+B T X X T T T V P S E	1
+S X T T B X P V E T T	0
+B T X X T V P X V V E	1
+B P V X T V E X X T V	0
+B T X X V P X T V V E	1
+T V B X T V P X V E X	0
+B T X X V P X V P S E	1
+P X E S B T X P V V X	0
+B P T T T T T T T V V E	1
+T T V P T T V T E T T B	0
+B P T T T T T T V P S E	1
+B T S P T T V T P E T T	0
+B P T T T T V P X V V E	1
+E B T V P V P T V T T X	0
+B P T T T V P X T V V E	1
+T T X V T V E V P T P B	0
+B P T T T V P X V P S E	1
+S V V X T T E P B P T P	0
+B P T T V P X T T V V E	1
+T T E V P V P T B T X V	0
+B P T T V P X T V P S E	1
+V P B T T T P E X P S V	0
+B P T V P X T T T V V E	1
+T B P T X E T V P V T V	0
+B P T V P X T T V P S E	1
+T X P E T V B P T P V S	0
+B P T V P X V P X V V E	1
+E V V V V T B P P P X X	0
+B P V P X T T T T V V E	1
+V B V V P T E X T T P T	0
+B P V P X T T T V P S E	1
+V P P P V T T E X T B S	0
+B P V P X T V P X V V E	1
+P E V V P V B T X P X V	0
+B P V P X V P X T V V E	1
+P P V V T B V X E X V P	0
+B P V P X V P X V P S E	1
+V P X P B P V P V X E S	0
+B T S S S S S S S X S E	1
+S T S S X S S B S S S E	0
+B T S S S S S X X V V E	1
+S V S T X E S B S V X S	0
+B T S S S S X X T V V E	1
+T X S B V X S V S S T E	0
+B T S S S S X X V P S E	1
+S E X P T V S X B S S S	0
+B T S S S X X T T V V E	1
+T T B S X S X S V V E T	0
+B T S S S X X T V P S E	1
+X S E S T X V P T S S B	0
+B T S S X X T T T V V E	1
+X T S V T V S B X T E T	0
+B T S S X X T T V P S E	1
+S V P T S E X X S B T T	0
+B T S S X X V P X V V E	1
+V X P B X X E S V T S V	0
+B T S X X T T T T V V E	1
+X T E T V X T B T S V T	0
+B T S X X T T T V P S E	1
+B S T T T E V X T S X P	0
+B T S X X T V P X V V E	1
+P V T T E X B X V X V S	0
+B T S X X V P X T V V E	1
+T T B X S X V E P X V V	0
+B T S X X V P X V P S E	1
+V P E X X T X V B S S P	0
+B T X X T T T T T V V E	1
+E T V T T X V T T B T X	0
+B T X X T T T T V P S E	1
+B S E T V P X T T T X T	0
+B T X X T T V P X V V E	1
+X V P X E T X V B T V T	0
+B T X X T V P X T V V E	1
+X E B P V X X T V V T T	0
+B T X X T V P X V P S E	1
+T X P B V T V S X X E P	0
+B T X X V P X T T V V E	1
+X X V X T B P T E V T V	0
+B T X X V P X T V P S E	1
+T X E P P V V X X B S T	0
+B P T T T T T T T T V V E	1
+T T P E T V T B T T T T V	0
+B P T T T T T T T V P S E	1
+P T S E T B T T V T P T T	0
+B P T T T T T V P X V V E	1
+T T T P T T V X B V E P V	0
+B P T T T T V P X T V V E	1
+P T T B P T V V T E T V X	0
+B P T T T T V P X V P S E	1
+E V S P B T T P X T P T V	0
+B P T T T V P X T T V V E	1
+X V V T T B V E T P T T P	0
+B P T T T V P X T V P S E	1
+T T V T B P V P S T E P X	0
+B P T T V P X T T T V V E	1
+V P P V T B E T V X T T T	0
+B P T T V P X T T V P S E	1
+S V E T B X P T P T T P V	0
+B P T T V P X V P X V V E	1
+V P T P B V E T X V V P X	0
+B P T V P X T T T T V V E	1
+X V P B P V T T T T V E T	0
+B P T V P X T T T V P S E	1
+T B T P S P T X V T V P E	0
+B P T V P X T V P X V V E	1
+P V E T T B V X X P P V V	0
+B P T V P X V P X T V V E	1
+P T V P X P V B V X E T V	0
+B P T V P X V P X V P S E	1
+P P X V B T X V V P P S E	0
+B P V P X T T T T T V V E	1
+X P V V T B T T E T P T V	0
+B P V P X T T T T V P S E	1
+T E T T T V X B V S P P P	0
+B P V P X T T V P X V V E	1
+P V T V X V B V X P P E T	0
+B P V P X T V P X T V V E	1
+V X V P V T V P X B T P E	0
+B P V P X T V P X V P S E	1
+P E P V S P T P X B V X V	0
+B P V P X V P X T T V V E	1
+V V E V X T P P T X B P V	0
+B P V P X V P X T V P S E	1
+P V E S X V P V P P X T B	0
+B T S S S S S S S S X S E	1
+S X S S B S T S S E S S S	0
+B T S S S S S S X X V V E	1
+S B V X S S S V S X S T E	0
+B T S S S S S X X T V V E	1
+X B S S S V T S X S V E T	0
+B T S S S S S X X V P S E	1
+S S X V S B E S S X P T S	0
+B T S S S S X X T T V V E	1
+X V T E B V X S S T S S T	0
+B T S S S S X X T V P S E	1
+T S P X S B E S S S X T V	0
+B T S S S X X T T T V V E	1
+X S V X V S B S T T T T E	0
+B T S S S X X T T V P S E	1
+X T S S P X S B E T T S V	0
+B T S S S X X V P X V V E	1
+V S V B T X E P S X S X V	0
+B T S S X X T T T T V V E	1
+T T T B S V V X T E T S X	0
+B T S S X X T T T V P S E	1
+S T V S T S X E T P T B X	0
+B T S S X X T V P X V V E	1
+E X T T V S P X X B V S V	0
+B T S S X X V P X T V V E	1
+V P E X V T V B S S X X T	0
+B T S S X X V P X V P S E	1
+B X X T S V S E P X V S P	0
+B T S X X T T T T T V V E	1
+T T V X S E T T X T V B T	0
+B T S X X T T T T V P S E	1
+S T T X T X E T V P T S B	0
+B T S X X T T V P X V V E	1
+V P V V S T X B T E X X T	0
+B T S X X T V P X T V V E	1
+S X X T P E X B T V T V V	0
+B T S X X T V P X V P S E	1
+B S X P X E S V T X T P V	0
+B T S X X V P X T T V V E	1
+V X S P T B X V V T E X T	0
+B T S X X V P X T V P S E	1
+V S T X X T X B E P S V P	0
+B T X X T T T T T T V V E	1
+T V T T B T T E V T X T X	0
+B T X X T T T T T V P S E	1
+T T B T X E T T T V X S P	0
+B T X X T T T V P X V V E	1
+T T T B X E T X P V X V V	0
+B T X X T T V P X T V V E	1
+V T T V E V X T X X T B P	0
+B T X X T T V P X V P S E	1
+B V P V X S P T X E X T T	0
+B T X X T V P X T T V V E	1
+X T X T B V E T X P V T V	0
+B T X X T V P X T V P S E	1
+X P S X T T V X B V T P E	0
+B T X X V P X T T T V V E	1
+T X X V B V V P T T X E T	0
+B T X X V P X T T V P S E	1
+B X E S X T P V T P V T X	0
+B T X X V P X V P X V V E	1
+V P T E V V B X X X P X V	0
+B P T T T T T T T T T V V E	1
+E T T B T T T T V P T V T T	0
+B P T T T T T T T T V P S E	1
+T B T T T E T S V T P P T T	0
+B P T T T T T T V P X V V E	1
+T T T B P X V T T E V T P V	0
+B P T T T T T V P X T V V E	1
+P V X P V T T T E T T V T B	0
+B P T T T T T V P X V P S E	1
+T B T T E T V T S X P V P P	0
+B P T T T T V P X T T V V E	1
+V P T T T T T V V E P B X T	0
+B P T T T T V P X T V P S E	1
+T T B P T P S X V E T T V P	0
+B P T T T V P X T T T V V E	1
+T P X T V T T V V T T P E B	0
+B P T T T V P X T T V P S E	1
+T T X T S T E V B T P V P P	0
+B P T T T V P X V P X V V E	1
+B X P X V V T P T V P E V T	0
+B P T T V P X T T T T V V E	1
+T V X T T T P P T T E V B V	0
+B P T T V P X T T T V P S E	1
+V P P S P B T X E T T T T V	0
+B P T T V P X T V P X V V E	1
+X T E P V T T X B V V P V P	0
+B P T T V P X V P X T V V E	1
+E X P T V T V B T P P V X V	0
+B P T T V P X V P X V P S E	1
+P V V B P T E X X S V T P P	0
+B P T V P X T T T T T V V E	1
+T E P T X V T V V P T B T T	0
+B P T V P X T T T T V P S E	1
+T V B P T V T X E P T P T S	0
+B P T V P X T T V P X V V E	1
+V T P T X E T P B V V X P V	0
+B P T V P X T V P X T V V E	1
+V V X B E T V P P T X P V T	0
+B P T V P X T V P X V P S E	1
+T V T X X E V P V P S P B P	0
+B P T V P X V P X T T V V E	1
+P E T V T V B T P P X V V X	0
+B P T V P X V P X T V P S E	1
+S X P V P X P T V E P B T V	0
+B P V P X T T T T T T V V E	1
+P T T T T V T V E P X T B V	0
+B P V P X T T T T T V P S E	1
+X S E T T T P V P V T B T P	0
+B P V P X T T T V P X V V E	1
+P V V V T E T P X B T V X P	0
+B P V P X T T V P X T V V E	1
+T V X V T T P B P X P E V V	0
+B P V P X T T V P X V P S E	1
+V P P B V X S X P T T V E P	0
+B P V P X T V P X T T V V E	1
+V V T P E B P T V V P X X T	0
+B P V P X T V P X T V P S E	1
+T S P X B T E P V P V X P V	0
+B P V P X V P X T T T V V E	1
+P X E V T P B V P T X V T V	0
+B P V P X V P X T T V P S E	1
+X P E T T V P V B P P V X S	0
+B P V P X V P X V P X V V E	1
+V V E V P V X B P P X V P X	0
+B T S S S S S S S S S X S E	1
+S S S S T S S S S B S E X S	0
+B T S S S S S S S X X V V E	1
+S B S V X S T S S S E V S X	0
+B T S S S S S S X X T V V E	1
+E S S X S T S X S V S T V B	0
+B T S S S S S S X X V P S E	1
+S B X S P E S S S S T V X S	0
+B T S S S S S X X T T V V E	1
+S X S V V S B T E X T T S S	0
+B T S S S S S X X T V P S E	1
+E B P S S X V S S T T S S X	0
+B T S S S S X X T T T V V E	1
+T X T S T T V S B X E S V S	0
+B T S S S S X X T T V P S E	1
+V S T T S X B S T E P S X S	0
+B T S S S S X X V P X V V E	1
+E T S P X S V V X V S X S B	0
+B T S S S X X T T T T V V E	1
+B T V X S X T V S T E T T S	0
+B T S S S X X T T T V P S E	1
+S S S B S P T X X T T E V T	0
+B T S S S X X T V P X V V E	1
+V P T X S T S V X S X V B E	0
+B T S S S X X V P X T V V E	1
+V E T X T X P S S S B X V V	0
+B T S S S X X V P X V P S E	1
+X E B V V P X X S S T S S P	0
+B T S S X X T T T T T V V E	1
+T X X S T V B S V T T T E T	0
+B T S S X X T T T T V P S E	1
+P T X S S T B T E T X V T S	0
+B T S S X X T T V P X V V E	1
+B S V X P E T V X X T S T V	0
+B T S S X X T V P X T V V E	1
+X X B V V T P T S E X V S T	0
+B T S S X X T V P X V P S E	1
+X P V T T S S X S P E B X V	0
+B T S S X X V P X T T V V E	1
+V T T T S V S X V P E X B X	0
+B T S S X X V P X T V P S E	1
+X P S V X S P X T S B V T E	0
+B T S X X T T T T T T V V E	1
+T X S V T T V B T E T X T T	0
+B T S X X T T T T T V P S E	1
+X S X E T T T V B T P T S T	0
+B T S X X T T T V P X V V E	1
+X E V T V T T X P X V S T B	0
+B T S X X T T V P X T V V E	1
+T T P T X E B V S X V V X T	0
+B T S X X T T V P X V P S E	1
+E X X B S X P S T P V V T T	0
+B T S X X T V P X T T V V E	1
+T T P X S X T V X B V E T V	0
+B T S X X T V P X T V P S E	1
+T X V T S X X E P S V T P B	0
+B T S X X V P X T T T V V E	1
+B X V E T X T V T V X P T S	0
+B T S X X V P X T T V P S E	1
+S S X T T V X T P V E P B X	0
+B T S X X V P X V P X V V E	1
+V S X V X X V X E P T B V P	0
+B T X X T T T T T T T V V E	1
+V T T T X T X T E V B T T T	0
+B T X X T T T T T T V P S E	1
+S T X E P T T B X T T V T T	0
+B T X X T T T T V P X V V E	1
+V B E V V P X T T X T T X T	0
+B T X X T T T V P X T V V E	1
+X X P T T T V B V E X V T T	0
+B T X X T T T V P X V P S E	1
+P T S X V B P T T X T E X V	0
+B T X X T T V P X T T V V E	1
+T V P V X V T X B X E T T T	0
+B T X X T T V P X T V P S E	1
+X T S T P B P E T V X T V X	0
+B T X X T V P X T T T V V E	1
+T V X V B T T E T T X V P X	0
+B T X X T V P X T T V P S E	1
+P S X T B E V T V X T T X P	0
+B T X X T V P X V P X V V E	1
+P V B E V V V X X X X T P T	0
+B T X X V P X T T T T V V E	1
+T E X T V V T X T T X P V B	0
+B T X X V P X T T T V P S E	1
+V X B X T X V T P T T E S P	0
+B T X X V P X T V P X V V E	1
+V P X B P T E V V V X X X T	0
+B T X X V P X V P X T V V E	1
+X E V P V X P V T V B T X X	0
+B T X X V P X V P X V P S E	1
+X B V X X X T V P V P E P S	0
+B P T T T T T T T T T T V V E	1
+T T T B T T T T T E T T V P V	0
+B P T T T T T T T T T V P S E	1
+S B T E T T T P T T T T T P V	0
+B P T T T T T T T V P X V V E	1
+T X T V V T P P T V T B E T T	0
+B P T T T T T T V P X T V V E	1
+P X V T T T V T P T T B E V T	0
+B P T T T T T T V P X V P S E	1
+X V T P V B T T E P T P T S T	0
+B P T T T T T V P X T T V V E	1
+T V T P E V T P T T X T B V T	0
+B P T T T T T V P X T V P S E	1
+V V T T E T T P P T P X T S B	0
+B P T T T T V P X T T T V V E	1
+X V T T T T B T P V E V P T T	0
+B P T T T T V P X T T V P S E	1
+T B P S E P T X V T T T P V T	0
+B P T T T T V P X V P X V V E	1
+V T X P V B T V E T T V X P P	0
+B P T T T V P X T T T T V V E	1
+T T X E T T B T V T V P V P T	0
+B P T T T V P X T T T V P S E	1
+T T T E T X V P V P P B T T S	0
+B P T T T V P X T V P X V V E	1
+B T T X V P P T P T X V E V V	0
+B P T T T V P X V P X T V V E	1
+P E P X T P V T X V V B T T V	0
+B P T T T V P X V P X V P S E	1
+V X S B P E T P T X T V V P P	0
+B P T T V P X T T T T T V V E	1
+T T P V T V E T B P X T V T T	0
+B P T T V P X T T T T V P S E	1
+E S V V T P P T T B T T T P X	0
+B P T T V P X T T V P X V V E	1
+T T V P X X B V P P V T T E V	0
+B P T T V P X T V P X T V V E	1
+P T P V E T T X T V P X V V B	0
+B P T T V P X T V P X V P S E	1
+V V T P P X B T X P T S V P E	0
+B P T T V P X V P X T T V V E	1
+B T T P V T V X E V X P V P T	0
+B P T T V P X V P X T V P S E	1
+P E X T P V V S B T T P V P X	0
+B P T V P X T T T T T T V V E	1
+B T T T V V P P T X E T T V T	0
+B P T V P X T T T T T V P S E	1
+P T T X V B T T E S P P V T T	0
+B P T V P X T T T V P X V V E	1
+T P B E X T V P V P X V V T T	0
+B P T V P X T T V P X T V V E	1
+B T V P V E V V T P P X T X T	0
+B P T V P X T T V P X V P S E	1
+V X B S T T P V E P X T P P V	0
+B P T V P X T V P X T T V V E	1
+P T X T V P P B T V T E X V V	0
+B P T V P X T V P X T V P S E	1
+X P P P S P X V T T V V T E B	0
+B P T V P X V P X T T T V V E	1
+T T V E V P X P V P X B T T V	0
+B P T V P X V P X T T V P S E	1
+S E P T X P V T P V X T B P V	0
+B P T V P X V P X V P X V V E	1
+P E V V B X X P T X V V P V P	0
+B P V P X T T T T T T T V V E	1
+E V P T V X B T T T V P T T T	0
+B P V P X T T T T T T V P S E	1
+T P S B T T P E T V V T X P T	0
+B P V P X T T T T V P X V V E	1
+X P P B V T X T E V P T V T V	0
+B P V P X T T T V P X T V V E	1
+T P B P T V X P V V E V T T X	0
+B P V P X T T T V P X V P S E	1
+B S T X X V V T V P E P T P P	0
+B P V P X T T V P X T T V V E	1
+X T P B E V V T V T T V P X P	0
+B P V P X T T V P X T V P S E	1
+X P V T S T T P V P V X E P B	0
+B P V P X T V P X T T T V V E	1
+P T V X T P X V E V T B V T P	0
+B P V P X T V P X T T V P S E	1
+T P B P V P S X P E X T V T V	0
+B P V P X T V P X V P X V V E	1
+T V V X E B P P X X V P V P V	0
+B P V P X V P X T T T T V V E	1
+T T E P V V V V T P X X B T P	0
+B P V P X V P X T T T V P S E	1
+P E P T T V X V P T S P B X V	0
+B P V P X V P X T V P X V V E	1
+V P V X T V P P V B V E X X P	0
+B P V P X V P X V P X T V V E	1
+P P P V X X X V T V B V P V E	0
+B P V P X V P X V P X V P S E	1
+S X P V V P P V X B V X P P E	0
+B T S S S S S S S S S S X S E	1
+S E S S S B S X S S S S S S T	0
+B T S S S S S S S S X X V V E	1
+S X S S E T S S B V S X S S V	0
+B T S S S S S S S X X T V V E	1
+T E S S X S S S S V S X T B V	0
+B T S S S S S S S X X V P S E	1
+S S X S S T B X E S S V S P S	0
+B T S S S S S S X X T T V V E	1
+S X S S S X T V T V S S T B E	0
+B T S S S S S S X X T V P S E	1
+S T S V S S S X T B E P X S S	0
+B T S S S S S X X T T T V V E	1
+E V T X S B S S S T T S T X V	0
+B T S S S S S X X T T V P S E	1
+T S P V X T S B S E S X T S S	0
+B T S S S S S X X V P X V V E	1
+P S S X S V S V E S T X B X V	0
+B T S S S S X X T T T T V V E	1
+T S T T E T B S X T X S S V V	0
+B T S S S S X X T T T V P S E	1
+B T S S X E V S S S T P T X T	0
+B T S S S S X X T V P X V V E	1
+S T X B V V S X S P X S E V T	0
+B T S S S S X X V P X T V V E	1
+E T V B S X V S X T S S P X V	0
+B T S S S S X X V P X V P S E	1
+X T S P S S S B E V S X V P X	0
+B T S S S X X T T T T T V V E	1
+B X T V T S E S T T T V S T X	0
+B T S S S X X T T T T V P S E	1
+T E T S X P T T X V T B S S S	0
+B T S S S X X T T V P X V V E	1
+X S T T S T B V E X X V V P S	0
+B T S S S X X T V P X T V V E	1
+P T V T S V T X V X E X S S B	0
+B T S S S X X T V P X V P S E	1
+S T P X V S E P T X S B S V X	0
+B T S S S X X V P X T T V V E	1
+P T X S X T V S T B S V V X E	0
+B T S S S X X V P X T V P S E	1
+S P X S B X P S V E V T S X T	0
+B T S S X X T T T T T T V V E	1
+S T X E T V S B T V T T T T X	0
+B T S S X X T T T T T V P S E	1
+T B T S T T V S T S E T P X X	0
+B T S S X X T T T V P X V V E	1
+X X B V V T T E X P T S S V T	0
+B T S S X X T T V P X T V V E	1
+V X V X P X T T S E T S V T B	0
+B T S S X X T T V P X V P S E	1
+T P V S P E X B S T T S V X X	0
+B T S S X X T V P X T T V V E	1
+V S T V S V X X X T P B E T T	0
+B T S S X X T V P X T V P S E	1
+E T V P S X X V X T P B T S S	0
+B T S S X X V P X T T T V V E	1
+S X T V V T S E X P T T V X B	0
+B T S S X X V P X T T V P S E	1
+E P B S X V P S X X T S V T T	0
+B T S S X X V P X V P X V V E	1
+X P P T V X B S E X V S X V V	0
+B T S X X T T T T T T T V V E	1
+E X T T V T T B T T X S T V T	0
+B T S X X T T T T T T V P S E	1
+E X T S T B X T T V T S T T P	0
+B T S X X T T T T V P X V V E	1
+T V E X T X T T V B V T P X S	0
+B T S X X T T T V P X T V V E	1
+B S T E V T X V T V P X T X T	0
+B T S X X T T T V P X V P S E	1
+X P T T V S X T X S B V P T E	0
+B T S X X T T V P X T T V V E	1
+T X X T V T T T B E S V V X P	0
+B T S X X T T V P X T V P S E	1
+P T X P X S E T S T T V X V B	0
+B T S X X T V P X T T T V V E	1
+B T T T S X X P T V V X T V E	0
+B T S X X T V P X T T V P S E	1
+X S V V X X T T T E S B P P T	0
+B T S X X T V P X V P X V V E	1
+X X S X V X P P T V V V T B E	0
+B T S X X V P X T T T T V V E	1
+T V V T T S T E X X B X V P T	0
+B T S X X V P X T T T V P S E	1
+P E T V X S P T T B T X V S X	0
+B T S X X V P X T V P X V V E	1
+X B X P S P T V V T V E V X X	0
+B T S X X V P X V P X T V V E	1
+V E X P V X V S P B X X V T T	0
+B T S X X V P X V P X V P S E	1
+P X V E S T V S X X P X P V B	0
+B T X X T T T T T T T T V V E	1
+V T X T T T T E T T X T V B T	0
+B T X X T T T T T T T V P S E	1
+T X P T T B V T S T T T X T E	0
+B T X X T T T T T V P X V V E	1
+V P T X T X T T B V X E T T V	0
+B T X X T T T T V P X T V V E	1
+V V X T B X E X T T T T T P V	0
+B T X X T T T T V P X V P S E	1
+X V V P E T X T T S T B X P T	0
+B T X X T T T V P X T T V V E	1
+P T V B T E T X X T V X T V T	0
+B T X X T T T V P X T V P S E	1
+T X X B T V P E P T V S T T X	0
+B T X X T T V P X T T T V V E	1
+X T T T V X T T V T P X E B V	0
+B T X X T T V P X T T V P S E	1
+V T P B T X T S T T X E X P V	0
+B T X X T T V P X V P X V V E	1
+T V E P P B T X V T V X X X V	0
+B T X X T V P X T T T T V V E	1
+X X E T T T B V X T V T V T P	0
+B T X X T V P X T T T V P S E	1
+T X E S T P V V T T X X T P B	0
+B T X X T V P X T V P X V V E	1
+V X P V V B X E P V T X X T T	0
+B T X X T V P X V P X T V V E	1
+X B P T V X E V V X T T X V P	0
+B T X X T V P X V P X V P S E	1
+V V P V T X S X B P X T E X P	0
+B T X X V P X T T T T T V V E	1
+T T T E X V B V X V P T X T T	0
+B T X X V P X T T T T V P S E	1
+T X T T X S B P V X T P V E T	0
+B T X X V P X T T V P X V V E	1
+X P V X X T P T X V V V E T B	0
+B T X X V P X T V P X T V V E	1
+T X X V X V V T E T P B V P X	0
+B T X X V P X T V P X V P S E	1
+P V P S X V P E T V B X T X X	0
+B T X X V P X V P X T T V V E	1
+V V X P T X V V P T T B X X E	0
+B T X X V P X V P X T V P S E	1
+S E T B V P X X V P X V T P X	0
+B P T T T T T T T T T T T V V E	1
+V T T T T T T T B T T V E T P T	0
+B P T T T T T T T T T T V P S E	1
+P T T T P B T E T T V T T S T T	0
+B P T T T T T T T T V P X V V E	1
+T P T V T V E T P B T T T X V T	0
+B P T T T T T T T V P X T V V E	1
+B X T T V T P T V P T E T T T V	0
+B P T T T T T T T V P X V P S E	1
+V T T T S T P T E T P X V T B P	0
+B P T T T T T T V P X T T V V E	1
+T T T V T P B T T V V T E P X T	0
+B P T T T T T T V P X T V P S E	1
+X P T E T B T T T T V V S P P T	0
+B P T T T T T V P X T T T V V E	1
+B P T T T T X E V T V T V T P T	0
+B P T T T T T V P X T T V P S E	1
+T T T V P P X P T T V E B T T S	0
+B P T T T T T V P X V P X V V E	1
+T V V T E X B P V T T P V X P T	0
+B P T T T T V P X T T T T V V E	1
+X T V T T B T E T P T V P T T V	0
+B P T T T T V P X T T T V P S E	1
+T V P T T T P S T T V E B X T P	0
+B P T T T T V P X T V P X V V E	1
+V V T T X P T E V X T T V P P B	0
+B P T T T T V P X V P X T V V E	1
+T T T V P B P E V X V V X T T P	0
+B P T T T T V P X V P X V P S E	1
+P S T E P V T X B T X P V P V T	0
+B P T T T V P X T T T T T V V E	1
+V T T T V T E T V T X B T T P P	0
+B P T T T V P X T T T T V P S E	1
+P P T T T V P E X B V T T T S T	0
+B P T T T V P X T T V P X V V E	1
+T E P X T B P P X V V V T T V T	0
+B P T T T V P X T V P X T V V E	1
+T P P X B V T P X V T E V T T V	0
+B P T T T V P X T V P X V P S E	1
+V T X E P X T P S T P B V P T V	0
+B P T T T V P X V P X T T V V E	1
+V B T X T P V V E V T X P P T T	0
+B P T T T V P X V P X T V P S E	1
+T S P V T X T P E T P P V X V B	0
+B P T T V P X T T T T T T V V E	1
+T T E V V T P T T X V B P T T T	0
+B P T T V P X T T T T T V P S E	1
+T T P S T P T T V T V T B P E X	0
+B P T T V P X T T T V P X V V E	1
+X T V P T B V E T T T P X P V V	0
+B P T T V P X T T V P X T V V E	1
+B P P V X T E X V V P T T V T T	0
+B P T T V P X T T V P X V P S E	1
+V P E T V T T X P S T P B V P X	0
+B P T T V P X T V P X T T V V E	1
+T T P V T T P T V E V X V X B P	0
+B P T T V P X T V P X T V P S E	1
+P B X T P T V X P V T T S P V E	0
+B P T T V P X V P X T T T V V E	1
+T V X V T T E P T P V P B X T V	0
+B P T T V P X V P X T T V P S E	1
+T P T V X B S E V P T P V T P X	0
+B P T T V P X V P X V P X V V E	1
+P T V T P P X P V X E B V V X V	0
+B P T V P X T T T T T T T V V E	1
+P V T T T P T B X T E T V V T T	0
+B P T V P X T T T T T T V P S E	1
+B V T T V P T E P S P X T T T T	0
+B P T V P X T T T T V P X V V E	1
+X P B P T V V E T V T T X P T V	0
+B P T V P X T T T V P X T V V E	1
+E P X P B T V X V T T V T V P T	0
+B P T V P X T T T V P X V P S E	1
+X X V V P T T P V S T E P T P B	0
+B P T V P X T T V P X T T V V E	1
+V T B V P T T V X P T E P X V T	0
+B P T V P X T T V P X T V P S E	1
+P T X P V T E B P P T V V X S T	0
+B P T V P X T V P X T T T V V E	1
+P P T B V V P V T T E X T V T X	0
+B P T V P X T V P X T T V P S E	1
+X P P P V T E B T V X V P T S T	0
+B P T V P X T V P X V P X V V E	1
+E P P P T B T V X P V V V V X X	0
+B P T V P X V P X T T T T V V E	1
+E V X T T P X V B V P P T T V T	0
+B P T V P X V P X T T T V P S E	1
+V S P V B X X T P P V P T T T E	0
+B P T V P X V P X T V P X V V E	1
+E X V P P V X V X P V V B P T T	0
+B P T V P X V P X V P X T V V E	1
+P X T B P X V V X V P V V E P T	0
+B P T V P X V P X V P X V P S E	1
+T X P V S P X V V E V P X P P B	0
+B P V P X T T T T T T T T V V E	1
+X T T T V T P T V P T T E B T V	0
+B P V P X T T T T T T T V P S E	1
+V P V T S T T B T X P T P T E T	0
+B P V P X T T T T T V P X V V E	1
+P P V V T B P T E V T T T X X V	0
+B P V P X T T T T V P X T V V E	1
+V T P T X V X P V T E P T T V B	0
+B P V P X T T T T V P X V P S E	1
+V T T E T B P X V P T P P S X V	0
+B P V P X T T T V P X T T V V E	1
+V V X T T B E T T X P P V V P T	0
+B P V P X T T T V P X T V P S E	1
+T S T P T X V V E B X P P T P V	0
+B P V P X T T V P X T T T V V E	1
+T X V X V T T T P P P T V B V E	0
+B P V P X T T V P X T T V P S E	1
+X T T P X V T S P P V E B P V T	0
+B P V P X T T V P X V P X V V E	1
+P P P X T V X X V V B E P V V T	0
+B P V P X T V P X T T T T V V E	1
+T P E P X V V X P T T V T B T V	0
+B P V P X T V P X T T T V P S E	1
+E P P X X T V T V T P P S T V B	0
+B P V P X T V P X T V P X V V E	1
+X P X V V V P P V P T X B T V E	0
+B P V P X T V P X V P X T V V E	1
+T V P P X X P T V E B V P X V V	0
+B P V P X T V P X V P X V P S E	1
+P P P E X B P V V T V S P V X X	0
+B P V P X V P X T T T T T V V E	1
+P T B V T P V V T V X T P X T E	0
+B P V P X V P X T T T T V P S E	1
+S B T X X P T T T P V P P V V E	0
+B P V P X V P X T T V P X V V E	1
+B V V X T X P E V X V V T P P P	0
+B P V P X V P X T V P X T V V E	1
+P X B P V V X V X V P V T P T E	0
+B P V P X V P X T V P X V P S E	1
+S X X P V P V X V T P P V E B P	0
+B P V P X V P X V P X T T V V E	1
+P T V V P X B E X P X V T V P V	0
+B P V P X V P X V P X T V P S E	1
+V V V S X P X P X P E P P T B V	0
+B T S S S S S S S S S S S X S E	1
+S S S S S S S T S X B S S S S E	0
+B T S S S S S S S S S X X V V E	1
+S S S S S S S E S S B X X V V T	0
+B T S S S S S S S S X X T V V E	1
+X B S T S V E S T X S S S V S S	0
+B T S S S S S S S S X X V P S E	1
+S S S S E V P S X S B T S S S X	0
+B T S S S S S S S X X T T V V E	1
+S E S S S S B X T X V S V T T S	0
+B T S S S S S S S X X T V P S E	1
+S T S B E S V P S X S S T X S S	0
+B T S S S S S S X X T T T V V E	1
+S X T T E X B S T T S S S V S V	0
+B T S S S S S S X X T T V P S E	1
+S B P X S E S T V S X S T S T S	0
+B T S S S S S S X X V P X V V E	1
+V B P X V S X S S V S X S S E T	0
+B T S S S S S X X T T T T V V E	1
+V S T X V T S S T E T S S T B X	0
+B T S S S S S X X T T T V P S E	1
+X T X E B S T S T S P S T S S V	0
+B T S S S S S X X T V P X V V E	1
+X T V V X S T E S S S S B P V X	0
+B T S S S S S X X V P X T V V E	1
+V T S T S B P X X S V S E V X S	0
+B T S S S S S X X V P X V P S E	1
+S X V S V B S X E S T P P S S X	0
+B T S S S S X X T T T T T V V E	1
+T X S T S E X S V S T V T B T T	0
+B T S S S S X X T T T T V P S E	1
+E S X S T T S T T P V B X T S S	0
+B T S S S S X X T T V P X V V E	1
+S X S V X V P S T B E T V T S X	0
+B T S S S S X X T V P X T V V E	1
+E S T X V S P S T T X V V S B X	0
+B T S S S S X X T V P X V P S E	1
+S T P T B E S V S V P X S S X X	0
+B T S S S S X X V P X T T V V E	1
+T S S B P T V E T X V X X V S S	0
+B T S S S S X X V P X T V P S E	1
+S E V S T V S X S B P S P X X T	0
+B T S S S X X T T T T T T V V E	1
+T T T S V T T T T X E B X V S S	0
+B T S S S X X T T T T T V P S E	1
+S P X E T T T S S T T S V B X T	0
+B T S S S X X T T T V P X V V E	1
+P X S T B T S V X E V X V T S T	0
+B T S S S X X T T V P X T V V E	1
+X V S V B S T T X V T E X S T P	0
+B T S S S X X T T V P X V P S E	1
+T T V X V S E X B P P T S X S S	0
+B T S S S X X T V P X T T V V E	1
+T S X V X B T P V T E X S S T V	0
+B T S S S X X T V P X T V P S E	1
+S T V X S V X S X B T E S T P P	0
+B T S S S X X V P X T T T V V E	1
+B X S X T V V S X T T P S V T E	0
+B T S S S X X V P X T T V P S E	1
+P T T S V B S S E X T S P X V X	0
+B T S S S X X V P X V P X V V E	1
+X S X X X P B E V T V V S P V S	0
+B T S S X X T T T T T T T V V E	1
+T T T S E T T S X V T V T T B X	0
+B T S S X X T T T T T T V P S E	1
+B V T E T S X T S X T T P T S T	0
+B T S S X X T T T T V P X V V E	1
+E V T T X V P X T T X S S B T V	0
+B T S S X X T T T V P X T V V E	1
+T S V V V X E T T X T B T P X S	0
+B T S S X X T T T V P X V P S E	1
+T S T X T P X E V T S X B V P S	0
+B T S S X X T T V P X T T V V E	1
+S X B T P S T T T E X V T V X V	0
+B T S S X X T T V P X T V P S E	1
+P X E T X S P V T S S V T B X T	0
+B T S S X X T V P X T T T V V E	1
+T T S X X T T S T P V B E V V X	0
+B T S S X X T V P X T T V P S E	1
+T X S X P V T B P T V T E S X S	0
+B T S S X X T V P X V P X V V E	1
+X E X P B X T S V V S X T V V P	0
+B T S S X X V P X T T T T V V E	1
+X S P T V T B E X V T X S V T T	0
+B T S S X X V P X T T T V P S E	1
+V S V X T P E B S X T S T T P X	0
+B T S S X X V P X T V P X V V E	1
+E V S S X T P V V X X B P X V T	0
+B T S S X X V P X V P X T V V E	1
+X X V V X E S P V P T V S X B T	0
+B T S S X X V P X V P X V P S E	1
+E S T X X S V S X B V P P P V X	0
+B T S X X T T T T T T T T V V E	1
+V T T T T T T T S V B E T X X T	0
+B T S X X T T T T T T T V P S E	1
+T T T V T T B X X T S S T E T P	0
+B T S X X T T T T T V P X V V E	1
+T S X X V T E T T V X P T T B V	0
+B T S X X T T T T V P X T V V E	1
+B T T T P X T V S T V V X X E T	0
+B T S X X T T T T V P X V P S E	1
+T X T S X X V T T T B S V P E P	0
+B T S X X T T T V P X T T V V E	1
+V E T X X V S B T T T T V T X P	0
+B T S X X T T T V P X T V P S E	1
+S T V V P X T B T P T T X E X S	0
+B T S X X T T V P X T T T V V E	1
+T X T B V T T V E T T X P V S X	0
+B T S X X T T V P X T T V P S E	1
+S B T P X P S V T T T V T E X X	0
+B T S X X T T V P X V P X V V E	1
+B V X V S V T X E X X P T P V T	0
+B T S X X T V P X T T T T V V E	1
+S T V T X X B T V T P T E V X T	0
+B T S X X T V P X T T T V P S E	1
+T T X V V X P T T X B S E P T S	0
+B T S X X T V P X T V P X V V E	1
+V B E P T X V V V T X X P S X T	0
+B T S X X T V P X V P X T V V E	1
+V T X X X E V P P B V T T S X V	0
+B T S X X T V P X V P X V P S E	1
+P V S B X E X T X X S P V V T P	0
+B T S X X V P X T T T T T V V E	1
+T T T X T V B X X V S E P V T T	0
+B T S X X V P X T T T T V P S E	1
+B S T T X V X E P T T T X S P V	0
+B T S X X V P X T T V P X V V E	1
+T T B P V X V X X X V S V P E T	0
+B T S X X V P X T V P X T V V E	1
+V T X T X V P X B T V P S X E V	0
+B T S X X V P X T V P X V P S E	1
+X P V T X T X V E X S P P B V S	0
+B T S X X V P X V P X T T V V E	1
+T T E S B V X P X T V X X V V P	0
+B T S X X V P X V P X T V P S E	1
+P X P V S V V T X S P E T X X B	0
+B T X X T T T T T T T T T V V E	1
+T X T B X T T T T T T V T V E T	0
+B T X X T T T T T T T T V P S E	1
+S T T X P E T T T T B T T V T X	0
+B T X X T T T T T T V P X V V E	1
+T T T V B P X V T T X E T T X V	0
+B T X X T T T T T V P X T V V E	1
+E T X X T T V T T T X V V T P B	0
+B T X X T T T T T V P X V P S E	1
+B V T S T P X T X T E V P T X T	0
+B T X X T T T T V P X T T V V E	1
+X T P E T B T X V T T V V X T T	0
+B T X X T T T T V P X T V P S E	1
+B T T T S V X V X P X T E T T P	0
+B T X X T T T V P X T T T V V E	1
+T T V T T T X E P X B T V X V T	0
+B T X X T T T V P X T T V P S E	1
+V T T T X E P T X S T B P V T X	0
+B T X X T T T V P X V P X V V E	1
+X P T X T T V B X V V X T E P V	0
+B T X X T T V P X T T T T V V E	1
+V T T T T T T P V X X B V E X T	0
+B T X X T T V P X T T T V P S E	1
+V T E T P T P X X T X T T S B V	0
+B T X X T T V P X T V P X V V E	1
+V B P X P T X E V T X V T V T X	0
+B T X X T T V P X V P X T V V E	1
+V T X B V V T V P X T T P E X X	0
+B T X X T T V P X V P X V P S E	1
+X X B V X T E T P P V T S P V X	0
+B T X X T V P X T T T T T V V E	1
+V B V T X T E T X P X T T V T T	0
+B T X X T V P X T T T T V P S E	1
+T X T B V X S E T P X T T V T P	0
+B T X X T V P X T T V P X V V E	1
+P T X E X X V B T V V P T V X T	0
+B T X X T V P X T V P X T V V E	1
+V T P V T P V X V E X T X T X B	0
+B T X X T V P X T V P X V P S E	1
+T V T P X T S E V P P X B X X V	0
+B T X X T V P X V P X T T V V E	1
+X B X P X X E T V V V T T V P T	0
+B T X X T V P X V P X T V P S E	1
+V X X T T E X P T P X S V B V P	0
+B T X X V P X T T T T T T V V E	1
+V T B T E X T T T V P T X X T V	0
+B T X X V P X T T T T T V P S E	1
+T V X X T X T T V P T T P E B S	0
+B T X X V P X T T T V P X V V E	1
+V T T B X P V X V P V X T T X E	0
+B T X X V P X T T V P X T V V E	1
+T E B V V P T T T X X X X P V V	0
+B T X X V P X T T V P X V P S E	1
+X T T P V X V T X V E P P X S B	0
+B T X X V P X T V P X T T V V E	1
+X V X X T T P T P V V V T E X B	0
+B T X X V P X T V P X T V P S E	1
+V P E T T X X P X B V P T V X S	0
+B T X X V P X V P X T T T V V E	1
+E V B V X P T V P T X V T X X T	0
+B T X X V P X V P X T T V P S E	1
+E T V X T S P V X X P V X P T B	0
+B T X X V P X V P X V P X V V E	1
+X V P X X V V V X T B E V X P P	0
