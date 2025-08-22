@@ -34,16 +34,16 @@ cd hankel
 ### Acceptor
 
 ```bash
-hankel-learn ./examples/data/tomita_2_labelled.txt ./tomita_2.npz
+hankel-learn ./examples/data/tomita_2_pos_neg_lab.txt ./tomita_2.npz
 hankel-show -o cons,./wfsa.png ./tomita_2.npz
-hankel-predict -s -o ./prediction-5-by-2.txt ./examples/data/tomita_5_unlabelled.txt ./tomita_2.npz
+hankel-predict -s -o ./prediction-5-by-2.txt ./examples/data/tomita_5_pos_unlab.txt ./tomita_2.npz
 ```
 ### Language model
 
 ```bash
-hankel-learn -k lm ./examples/data/tomita_2_unlabelled.txt ./tomita_2_lm.npz
+hankel-learn -k lm ./examples/data/tomita_2_pos_unlab.txt ./tomita_2_lm.npz
 hankel-show -o cons,./lm.png ./tomita_2_lm.npz
-hankel-predict -s -o ./prediction-5-by-2-lm.txt ./examples/data/tomita_5_unlabelled.txt ./tomita_2_lm.npz
+hankel-predict -s -o ./prediction-5-by-2-lm.txt ./examples/data/tomita_5_pos_unlab.txt ./tomita_2_lm.npz
 ```
 
 ## Features
