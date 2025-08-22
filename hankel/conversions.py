@@ -2,49 +2,61 @@
 Module for conversions from, to and between different types of WFSAs and other structures.
 """
 from collections import defaultdict, deque
-from collections.abc import Iterable, Mapping, Sequence, Set
-from itertools import product
+from collections.abc import Mapping, Sequence, Set
 from logging import Logger, getLogger
-from math import atan2, degrees, log2
-from random import sample
-from typing import Deque, Dict, Final, FrozenSet, List, Literal, Mapping, Sequence, Set, Tuple, TypeAlias
+from math import atan2, degrees
+from typing import (
+    Deque,
+    Dict,
+    Final,
+    FrozenSet,
+    List,
+    Literal,
+    Mapping,
+    Sequence,
+    Set,
+    Tuple,
+    TypeAlias,
+)
 
 import deal
+import numpy as np
 from graphviz import Digraph
-from numpy import (argmax, around, array_equal, broadcast_to, diag, einsum, expand_dims, eye, float32, ones, outer,
-                   squeeze, stack, zeros, zeros_like)
+from numpy import (
+    allclose,
+    arange,
+    argmax,
+    around,
+    array_equal,
+    asarray,
+    delete,
+    diag,
+    float32,
+    ones,
+    outer,
+    stack,
+    swapaxes,
+    zeros,
+    zeros_like,
+)
 from numpy.typing import NDArray
 from pydantic import validate_call
 from scipy.linalg import inv, norm, svd
 
-from hankel import PYDANTIC_CONFIG, Fn, px
+from hankel import PYDANTIC_CONFIG
 from hankel.models import WFSA
 
 Port: TypeAlias = Literal['n', 's', 'e', 'w', 'nw', 'sw', 'se', 'ne']
 
 ALL_PORTS: Final[Tuple[Port, ...]] = ('n', 's', 'e', 'w', 'nw', 'sw', 'se', 'ne')
 SYMBOL_TO_SUBSCRIPT: Final[Mapping[str, str]] = dict(zip('0123456789-', '₀₁₂₃₄₅₆₇₈₉₋'))
-SYMBOL_TO_SUPERSCRIPT: Final[Mapping[str, str]] = {"0": "⁰",
-                                                   "1": "¹",
-                                                   "2": "²",
-                                                   "3": "³",
-                                                   "4": "⁴",
-                                                   "5": "⁵",
-                                                   "6": "⁶",
-                                                   "7": "⁷",
-                                                   "8": "⁸",
-                                                   "9": "⁹",
-                                                   "a": "ᵃ", "b": "ᵇ", "c": "ᶜ", "d": "ᵈ", "e": "ᵉ", "f": "ᶠ", "g": "ᵍ",
-                                                   "h": "ʰ", "i": "ⁱ", "j": "ʲ", "k": "ᵏ", "l": "ˡ", "m": "ᵐ", "n": "ⁿ",
-                                                   "o": "ᵒ", "p": "ᵖ", "q": "q", "r": "ʳ", "s": "ˢ", "t": "ᵗ", "u": "ᵘ",
-                                                   "v": "ᵛ", "w": "ʷ", "x": "ˣ", "y": "ʸ", "z": "ᶻ",
-                                                   "A": "ᴬ", "B": "ᴮ", "C": "ᶜ", "D": "ᴰ", "E": "ᴱ", "F": "ᶠ", "G": "ᵍ",
-                                                   "H": "ᴴ", "I": "ᴵ", "J": "ʲ", "K": "ᴷ", "L": "ᴸ", "M": "ᴹ", "N": "ᴺ",
-                                                   "O": "ᴼ", "P": "ᴾ", "Q": "q", "R": "ᴿ", "S": "ˢ", "T": "ᵀ", "U": "ᵁ",
-                                                   "V": "ⱽ", "W": "ᵂ", "X": "ˣ", "Y": "ʸ", "Z": "ᶻ"}
+SYMBOL_TO_SUPERSCRIPT: Final[Mapping[str, str]] = \
+    dict(zip("0123456789", "⁰¹²³⁴⁵⁶⁷⁸⁹")) |\
+    dict(zip("abcdefghijklmnopqrstuvwxyz", "ᵃᵇᶜᵈᵉᶠᵍʰⁱʲᵏˡᵐⁿᵒᵖqʳˢᵗᵘᵛʷˣʸᶻ")) |\
+    dict(zip("ABCDEFGHIJKLMNOPQRSTUVWXYZ", ('ᴬ', 'ᴮ', '[ᶜ]', 'ᴰ', 'ᴱ', '[ᶠ]', '[ᵍ]', 'ᴴ', 'ᴵ', '[ʲ]', 'ᴷ', 'ᴸ', 'ᴹ',
+                                            'ᴺ', 'ᴼ', 'ᴾ', '[q]', 'ᴿ', '[ˢ]', 'ᵀ', 'ᵁ', 'ⱽ', 'ᵂ', '[ˣ]', '[ʸ]', '[ᶻ]')))
 
 LOG: Final[Logger] = getLogger(__package__)
-
 
 @deal.pre(lambda initial, transitions, final:
           initial.ndim == 1 and initial.size and
@@ -83,47 +95,50 @@ def with_single_start(initial: NDArray, transitions: NDArray, final: NDArray) ->
           (length == -1 or length > 0) and
           quant >= 0)
 @validate_call(config=PYDANTIC_CONFIG, validate_return=True)
-def as_unweighted(initial: NDArray, transitions: NDArray, final: NDArray, length: int = -1, quant: int = 7) \
+def as_unweighted(initial: NDArray, transitions: NDArray, final: NDArray, quant: int = 7, fail_states: bool = True) \
         -> Tuple[NDArray, NDArray, NDArray]:
-    """
-    Returns the unweighted version of the given WFSA parameters. Experimentatl. When it works, the resulting parameters 
-    are functionally equivalent but only have boolean weights. This only works for acceptors not for language models.
-    The current implementation is a hack and uses a path through the WFSA to sample the embeddings/states of the 
-    corresponding FSA.
 
-    Args:
-        initial (NDArray): Initial weight vector.
-        transitions (NDArray): State transition tensor.
-        final (NDArray): Final weight Vector.
-        length (int, optional): The length of the path to use to sample the embeddings. Defaults to -1.
-        quant (int, optional): The quantisation level. Defaults to 7.
+    transits: Set[Tuple[Tuple[float, ...], int, Tuple[float, ...]]] = set()
+    for symbol in range(len(transitions)):
+        _find_transitions(symbol, initial, transitions, transits, quant, 0)
 
-    Returns:
-        Tuple[NDArray, NDArray, NDArray]: Parameters of the FSA corresponding to the given WFSA.
-    """
-    symbols: Sequence[int] = tuple(range(transitions.shape[0]))
-    length = min(len(symbols)*2, 16) if length == -1 else length  # heuristic that works with smaller vocabs/datasets
-    combos: Tuple[Tuple[int, ...], ...] = tuple(tuple(sample(symbols*2, length)) for _ in range(512))
-    LOG.debug(f'Converting WFSA to unweighted with length {length} and precision {quant}, {len(combos)} combinations')
-    batch: NDArray = stack(tuple(tuple(eye(len(symbols), dtype=int)[idx] for idx in seq) for seq in combos))
+    states: Set[Tuple[float, ...]] = set()
+    for q, _, q_next in transits:
+        states.update((q,))
 
-    recs: FrozenSet[Tuple[Tuple[float, ...], int, Tuple[float, ...], int]] = \
-        _sample_transitions(initial, transitions, final, batch, quant)
-    state_to_id: Mapping[Tuple[float, ...], int] = dict(
-        zip(states := {q for (q_prev, x, q, final) in recs}, range(len(states))))
+    state_to_id = dict(zip(states, range(len(states))))
+
     dim: int = len(state_to_id)
-
     initial_: NDArray = zeros((dim, ))
     final_: NDArray = zeros((dim, ))
-    transitions_: List[NDArray] = [zeros((dim, dim)) for _ in range(len(symbols))]
-    for (q_prev, x, q, is_final) in recs:
-        if not q_prev:
-            initial_[state_to_id[q]] = 1
-        else:
-            transitions_[x][state_to_id[q]][state_to_id[q_prev]] = 1
-        final_[state_to_id[q]] = is_final
+    transitions_: NDArray = stack([zeros((dim, dim)) for _ in range(len(transitions))], axis=-3)
 
-    return initial_, stack([m.T for m in transitions_], axis=-3), final_
+    for q, symbol, q_next in transits:
+        transitions_[symbol][state_to_id[q]][state_to_id[q_next]] = 1
+
+    for state, id in state_to_id.items():
+        if allclose(asarray(state) @ final, 1, atol=1e-2, rtol=0):
+            final_[id] = 1
+
+        if allclose(asarray(state), initial, atol=1e-6, rtol=0):
+            initial_[id] = 1
+
+    if not fail_states:  # removes fail states, defined as those that are absorbing but not accepting
+
+        all_ = swapaxes(transitions_, -1, -2).sum(axis=0)
+
+        fail: Set[int] = set()
+        for idx, col in enumerate(all_.T):
+            zero_except_idx = np.all(col[arange(all_.shape[0]) != idx] == 0)
+            if zero_except_idx and col[idx] == len(transitions_) and final_[idx] != 1:
+                fail.add(idx)
+
+        for idx in fail:
+            initial_ = delete(initial_, idx)
+            final_ = delete(final_, idx)
+            transitions_ = delete(delete(transitions_, idx, axis=-1), idx, axis=-2)
+
+    return initial_, transitions_, final_
 
 
 @deal.pre(lambda wfsa, symbol_names=(), state_names=(), unweighted=False, title="WFSA State Transition Diagram":
@@ -243,47 +258,25 @@ def _find_v2v_matrix(a: NDArray, b: NDArray) -> NDArray:
     return (b_norm / a_norm) * (U @ Vh).T
 
 
-def _sample_transitions(initial: NDArray, transitions: NDArray, final: NDArray, xs: NDArray, precision: int = 7)\
-        -> FrozenSet[Tuple[Tuple[float, ...], int, Tuple[float, ...], int]]:
-    """
-    Samples transitions from the given WFSA to construct a corresponding FSA.
+def _find_transitions(symbol: int,
+                      embedding: NDArray,
+                      mats: NDArray,
+                      transitions: Set[Tuple[Tuple[float, ...], int, Tuple[float, ...]]],
+                      quant: int,
+                      depth: int):
 
-    Args:
-        initial (NDArray): Initial weight vector.
-        transitions (NDArray): State transition tensor.
-        final (NDArray): Final weight Vector.
-        xs (NDArray): The input to sample transitions with.
-        precision (int, optional): The level of qunatisation to avoid spurious states due to
-            numerical imprecisions. Defaults to 7.
+    if depth > mats[symbol].shape[0]**2:
+        return
 
-    Returns:
-        FrozenSet[Tuple[Tuple[float, ...], int, Tuple[float, ...], int]]: A collection of tuples representing 
-            transitions as [start state index, symbol index, end state index, whether end state is a final state]
-    """
-    quant: Fn = px(around, decimals=precision)
+    new_embedding: NDArray = mats[symbol].T @ embedding
 
-    init: NDArray = expand_dims(expand_dims(initial, 0), -1)  # D -> 1xD -> 1xDx1
-    state: NDArray = broadcast_to(init, (xs.shape[0], init.shape[1], 1)).copy()
-    prev_state: NDArray = state
-    unique_transitions: Set[Tuple[Tuple[float, ...], int, Tuple[float, ...], int]] = {
-        ((), -1, tuple(map(float, initial)), int(quant(initial @ final)))}
-    if xs.ndim == 3:  # this is to support empty strings
+    if (trans := (tuple(around(embedding, quant)), symbol, tuple(around(new_embedding, quant)))) in transitions:
+        return
 
-        trans: NDArray = einsum('BTV,VDd->BTdD', xs, transitions)  # Pre-computes transitions: 'BTV,VDd -> BTdD'
+    transitions.add(trans)
 
-        for t in range(xs.shape[-2]):
-            state = trans[:, t] @ state  # [BxTxDxD -> BxDxD] @ BxDx1 -> BxDx1
-            transitions_ = ((tuple(map(float, q_prev)),
-                             int(argmax(x)),
-                             tuple(map(float, q)),
-                             int(quant(q @ final)))
-                            for q_prev, x, q in zip(quant(squeeze(prev_state, -1)),
-                                                    xs[:, t, :],
-                                                    quant(squeeze(state, -1))))
-            unique_transitions.update(transitions_)
-            prev_state = state
-
-    return frozenset(unique_transitions)
+    for symbol in range(len(mats)):
+        _find_transitions(symbol, new_embedding, mats, transitions, quant, depth+1)
 
 
 def _draw_states(state_names: Tuple[str, ...],
