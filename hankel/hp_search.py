@@ -22,7 +22,7 @@ from hankel.spectral import KINDS, Kind, learn_wfsa
 LOG: Final[Logger] = getLogger(__package__)
 MAX_LOSS: Final[float] = 1e22
 RUN_TEMPLATE: Final[Template] = Template('train. loss [${t_loss}] valid. loss [${v_loss}] tern. [${tern}] '
-                                        'dim. [${dim}]')
+                                         'dim. [${dim}]')
 LOOP_TEMPLATE: Final[Template] = Template("\tbasis selection algos\t= ${basis_algos}\n"
                                           "\tfactorisation algos\t= ${factor_algos}\n"
                                           "\ttop-k affixes\t\t= ${topks}\n"
@@ -97,9 +97,9 @@ def grid_search(kind: Kind,
     Exhaustively searches hyper-parameter space for Spectral learning. The best model, as per the validation loss
     is returned, along with its training and validation losses and optionally the test loss, plus its hyper-parameter
     specification.
-    
+
     Supported hyper-parameters:
-    
+
         `basis_algos`   : basis selection algorithms, one of `all`, `auto`, `freq`, `length`, `pmi`, 
             passed to `hankel.spectral.learn_wfsa`.
         `factor_algos`  : factorisation algorithms, one of `svd`, `nmf`, passed to `hankel.spectral.learn_wfsa`.
@@ -113,13 +113,13 @@ def grid_search(kind: Kind,
             passed to `hankel.spectral.learn_wfsa`. 
         `shuffles`      : shuffling flags for MF, one of `True`, `False`, passed to `hankel.spectral.learn_wfsa`.
         `tern_tols`     : the minimum distances from +-1 and 0 to consider a parameter ternary.
-        
+
         `t_loss_fns`    : training loss functions to try.  FIXME SHOULDN'T BE A HYPERPARAMETER
         `v_loss_fns`    : validation loss functions to try, also used for evaluating on the test dataset. SAME AS ABOVE
         `dims`          : number of dimensions for the WFSA, passed to `hankel.spectral.learn_wfsa`. SAME AS ABOVE
         `base_vocabs`   : extra tokens to include in the input vocabulary, passed to `hankel.spectral.learn_wfsa`. SAME
         `sv_ratios`     : singular value ratios, passed to `hankel.spectral.learn_wfsa`. SAME
-        
+
     Args:
         kind (Kind): The type of WFSA to learn, one of `binary`, `lm`, `polar`.
         x_vocab (Sequence[X]): Input vocabulary.
@@ -144,14 +144,15 @@ def grid_search(kind: Kind,
     Returns:
         Tuple[WFSA, float, float, float | None, Dict[str, Any]]: A 5-tuple contianing the best WFSA found, its training
             loss, validation loss, test loss, and its hyperparameters.
-    """    
-   
+    """
+
     specs: tuple[Mapping[str, Any], ...] = tuple(_combine(**hyper_params))
     period = max(1, int(period * len(specs)))
 
     # (tensor) datasets are needed for evaluation only, not for training
     x_coder: Coder[X] = one_hot_coder_from(x_vocab)
-    y_coder: Coder[Y]|None = None if kind=='lm' else polar_coder_from(y_vocab) if kind == 'polar' else one_hot_coder_from(y_vocab)
+    y_coder: Coder[Y] | None = None if kind == 'lm' else polar_coder_from(
+        y_vocab) if kind == 'polar' else one_hot_coder_from(y_vocab)
 
     t_dataset, train_xs, train_ys = _prepare_data(t_data, x_coder, y_coder, kind)
     v_dataset, *_ = _prepare_data(v_data, x_coder, y_coder, kind)
@@ -169,7 +170,7 @@ def grid_search(kind: Kind,
     best_wfsa, best_spec, best_v_loss, best_t_loss, best_ternariness = None, {}, MAX_LOSS, MAX_LOSS, -1
 
     for run,  spec in enumerate(specs, start=1):
-        wfsa: WFSA = _make_wfsa(*learn_wfsa(kind, train_xs, train_ys, **_learn_args(spec)), kind, unweighted, quant)
+        wfsa: WFSA = _make_wfsa(*learn_wfsa(kind, train_xs, train_ys, **_learn_args(spec)), kind)
 
         t_loss_fn, v_loss_fn, tern_tol = _evaluation_args(spec)
         t_loss, v_loss, ternariness = _compute_metrics(wfsa, t_dataset, v_dataset, t_loss_fn, v_loss_fn, kind, tern_tol)
@@ -199,6 +200,21 @@ def grid_search(kind: Kind,
     if not best_wfsa:
         raise RuntimeError('Could not run tuning loop.')
 
+    if unweighted:
+        best_wfsa = with_vector_output(
+            WFSA(*as_unweighted(best_wfsa.initial, best_wfsa.transitions, best_wfsa.final, quant)), kind == 'binary')
+        t_loss_fn, v_loss_fn, tern_tol = _evaluation_args(best_spec)
+       
+        best_t_loss, best_v_loss, best_ternariness = _compute_metrics(
+            best_wfsa, t_dataset, v_dataset, t_loss_fn, v_loss_fn, kind, tern_tol)
+        best_spec['ternariness'] = float(best_ternariness)
+       
+        info = _run_info(dict(t_loss=best_t_loss,
+                              v_loss=best_v_loss,
+                              tern=best_ternariness,
+                              dim=len(best_wfsa.initial)))
+        LOG.info('after conversion to FSA: '+info[24:])
+
     e_loss: float | None = None
     if e_data:
         e_dataset, *_ = _prepare_data(e_data, x_coder, y_coder, kind)
@@ -207,9 +223,9 @@ def grid_search(kind: Kind,
     return best_wfsa, best_t_loss, best_v_loss, e_loss, best_spec
 
 
-def _prepare_data(data: Sequence[Tuple[Sequence[X], Y] | Sequence[X]], 
-                  x_coder: Coder[X], 
-                  y_coder: Coder[Y] | None, 
+def _prepare_data(data: Sequence[Tuple[Sequence[X], Y] | Sequence[X]],
+                  x_coder: Coder[X],
+                  y_coder: Coder[Y] | None,
                   kind: Kind) \
     -> Tuple[Tuple[Sequence[NDArray], Sequence[NDArray]] | Iterable[NDArray],
              Sequence[Sequence[X]],
@@ -225,10 +241,9 @@ def _prepare_data(data: Sequence[Tuple[Sequence[X], Y] | Sequence[X]],
     return dataset, xs, train_ys
 
 
-def _make_wfsa(initial: NDArray, transitions: NDArray, final: NDArray, kind: Kind, unweighted: bool, quant: int) \
-    -> WFSA:
+def _make_wfsa(initial: NDArray, transitions: NDArray, final: NDArray, kind: Kind) -> WFSA:
     params: Tuple[NDArray, NDArray, NDArray] = with_single_start(initial, transitions, final)
-    wfsa: WFSA = WFSA(*(as_unweighted(*params, quant=quant) if unweighted else params))
+    wfsa: WFSA = WFSA(*params)
     return wfsa if kind == 'lm' else with_vector_output(wfsa, kind == 'binary')
 
 
@@ -240,7 +255,7 @@ def _compute_metrics(wfsa: WFSA, t_dataset, v_dataset, t_loss_fn, v_loss_fn, kin
 
     v_loss: float = score(wfsa, v_dataset, ppl=v_loss_fn == ppl) if kind == 'lm' else \
         evaluate(wfsa, *v_dataset, v_loss_fn)
-    
+
     return t_loss, v_loss, avg_ternariness_of(wfsa.parameters, tern_tol)
 
 
@@ -293,7 +308,7 @@ def _combine(**specs) -> Iterable[Dict[str, Any]]:
     return _make_combos(specs)
 
 
-def _make_combos(specs:Dict[str, Any]) -> Iterable[Dict[str, Any]]:
+def _make_combos(specs: Dict[str, Any]) -> Iterable[Dict[str, Any]]:
     for k, v in dict(specs).items():
         if isinstance(v, Sequence) and not v:
             del specs[k]
@@ -302,7 +317,7 @@ def _make_combos(specs:Dict[str, Any]) -> Iterable[Dict[str, Any]]:
     return map(lambda vals: dict(zip(keys, vals)), product(*(specs.values())))
 
 
-def _run_info(spec: Dict[str, V], num_runs: int, run: int) -> str:
+def _run_info(spec: Dict[str, V], num_runs: int = -1, run: int = -1) -> str:
     return (f'[{run:5,d}] of [{num_runs:4,d}] runs: ' +
             RUN_TEMPLATE.substitute({k: f'{_format_value(k,v)}' for k, v in spec.items()}))
 
