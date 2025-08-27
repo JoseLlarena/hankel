@@ -1,3 +1,10 @@
+# [](https://github.com/JoseLlarena/hankel/compare/v0.4.1...v) (2025-08-27)
+
+### Docs
+
+* reformat references
+
+
 # [](https://github.com/JoseLlarena/hankel/compare/v0.3.0...v) (2025-08-22)
 
 
