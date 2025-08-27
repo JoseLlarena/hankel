@@ -49,3 +49,10 @@ dev = ["pytest>=8.4.1", "pytest-cov>=6.2.1", "hypothesis>=6.136.6" ]
 hankel-learn = "hankel.cli:learn"
 hankel-predict = "hankel.cli:predict"
 hankel-show = "hankel.cli:show"
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.format]
+quote-style = "single"
+skip-magic-trailing-comma = true
