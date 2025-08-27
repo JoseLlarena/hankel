@@ -73,15 +73,22 @@ pytest --cov=hankel unittests/*.py --cov-report=term --cov-report=html && python
 ## References
 
 ```
-Balle, B., Carreras, X., Luque, F. M., & Quattoni, A. (2014). Spectral learning of weighted automata: A forward-backward perspective. Machine Learning, 96(1–2), 33–63. https://doi.org/10.1007/s10994-013-5416-x
+Balle, B., Carreras, X., Luque, F. M., & Quattoni, A. (2014). 
+Spectral learning of weighted automata: A forward-backward perspective. 
+Machine Learning, 96(1–2), 33–63. https://doi.org/10.1007/s10994-013-5416-x
 ```
 
 ```
-Learning Weighted Automata. (2015). In B. Balle & M. Mohri, Lecture Notes in Computer Science (pp. 1–21). Springer International Publishing. https://doi.org/10.1007/978-3-319-23021-4_1
+Learning Weighted Automata. (2015). 
+In B. Balle & M. Mohri, Lecture Notes in Computer Science (pp. 1–21). 
+Springer International Publishing. https://doi.org/10.1007/978-3-319-23021-4_1
 ```
 
 ```
-Rabusseau, G., Li, T., & Precup, D. (2019). Connecting Weighted Automata and Recurrent Neural Networks through Spectral Learning. Proceedings of the Twenty-Second International Conference on Artificial Intelligence and Statistics, 1630–1639. https://proceedings.mlr.press/v89/rabusseau19a.html
+Rabusseau, G., Li, T., & Precup, D. (2019). 
+Connecting Weighted Automata and Recurrent Neural Networks through Spectral Learning. 
+Proceedings of the Twenty-Second International Conference on Artificial Intelligence and Statistics, 1630–1639. 
+https://proceedings.mlr.press/v89/rabusseau19a.html
 ```
 
 ## Changelog
