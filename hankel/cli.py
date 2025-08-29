@@ -12,47 +12,41 @@ from logging import DEBUG, Logger, getLogger
 from os.path import abspath
 from string import Template
 from typing import Any, Dict, Final, Mapping, Tuple
+from statistics import mean
+from typing import List, Tuple
 
-from click import (
-    BadParameter,
-    Choice,
-    File,
-    FloatRange,
-    IntRange,
-    Path,
-    argument,
-    get_binary_stream,
-    group,
-    option,
-)
+import matplotlib.pyplot
+
+from hankel import nout
+from numpy import asarray, eye, stack, vstack
+from numpy.random import Generator, default_rng, randn
+from numpy.typing import NDArray
+from scipy.linalg import svd
+from tensorly import norm
+from tensorly.decomposition import tucker
+from tensorly.tenalg import mode_dot
+
+
+from click import BadParameter, Choice, File, FloatRange, IntRange, Path, argument, get_binary_stream, group, option
 from numpy import allclose, arange, eye, stack, zeros_like
 from numpy.linalg import matrix_power
 from numpy.typing import NDArray
 
-from hankel import (
-    CSVList,
-    Fn,
-    RangeOfSteppedPercentages,
-    TripleSplit,
-    config_logging,
-    nout,
-    validate_special_int,
-)
+from hankel import CSVList, Fn, RangeOfSteppedPercentages, TripleSplit, config_logging, nout, validate_special_int
 from hankel.conversions import num_to_super, wfsa_to_graphviz
-from hankel.data import (
-    load_labelled_data,
-    load_unlabelled_data,
-    one_hot_coder_from,
-    to_unlabelled_dataset,
-)
-from hankel.evaluation import class_predict, lm_predict
+from hankel.data import load_labelled_data, load_unlabelled_data, one_hot_coder_from, to_unlabelled_dataset
+from hankel.evaluation import class_predict, lm_predict, make_batches
 from hankel.hp_search import grid_search
 from hankel.model_io import load_wfsa, save_wfsa
 from hankel.spectral import Kind
+from innerview.plotting import draw_3d_background, make_3d_plot
+from innerview.points import draw_cloud
 
 LOG: Final[Logger] = getLogger(__package__)
 
-LEARN_HELP: Final[str] = """Learn a non-deterministic (Weighted) Finite State Automaton (W/FSA) using Spectral Learning.\n
+LEARN_HELP: Final[
+    str
+] = """Learn a non-deterministic (Weighted) Finite State Automaton (W/FSA) using Spectral Learning.\n
                         It runs a grid search over the specified hyperparameters, using the validation
                         split to choose the lowest validation loss.\n
                         positional arguments:\n
@@ -162,17 +156,19 @@ EXTRA_VOCAB_HELP: Final[str] = """Extra tokens to add to the automatically compu
 LOSS_FUNCTIONS: Final[Tuple[str, ...]] = 'ppl', 'zo', 'zo1', 'zo2', 'zo3', 'zo4', 'zo5'
 BASES: Final[Tuple[str, ...]] = 'auto', 'all', 'freq', 'length', 'pmi'
 
-SPEC_TEMPLATE: Final[Template] = Template('\n\tBest run:\n\n'
-                                          '\trun\t\t= ${run}\n'
-                                          '\ttrain. loss \t= ${t_loss}\n'
-                                          '\tvalid. loss\t= ${v_loss}\n'
-                                          '\ttest   loss\t= ${e_loss}\n'
-                                          '\tternariness\t= ${ternariness}\n'
-                                          '\tbasis selection\t= ${basis_algo}\n'
-                                          '\ttop-k affix\t= ${topk}\n'
-                                          '\ttop-k prefix\t= ${topk_pref}\n'
-                                          '\ttop-k suffix\t= ${topk_suff}\n'
-                                          '\tdim.\t\t= ${dim}\n')
+SPEC_TEMPLATE: Final[Template] = Template(
+    '\n\tBest run:\n\n'
+    '\trun\t\t= ${run}\n'
+    '\ttrain. loss \t= ${t_loss}\n'
+    '\tvalid. loss\t= ${v_loss}\n'
+    '\ttest   loss\t= ${e_loss}\n'
+    '\tternariness\t= ${ternariness}\n'
+    '\tbasis selection\t= ${basis_algo}\n'
+    '\ttop-k affix\t= ${topk}\n'
+    '\ttop-k prefix\t= ${topk_pref}\n'
+    '\ttop-k suffix\t= ${topk_suff}\n'
+    '\tdim.\t\t= ${dim}\n'
+)
 
 
 @group()
@@ -185,44 +181,44 @@ def cli():
 @argument('model', type=File(mode='wb', lazy=False), default=None, required=False)
 @option('--kind', '-k', default='binary', show_default=True, type=Choice(['binary', 'polar', 'lm']), help=KIND_HELP)
 @option('--dim', default=-1, show_default=True, type=int, callback=validate_special_int, help=DIM_HELP)
-@option('--sv_ratio', '-sr', default=1e-1,  show_default=True, type=FloatRange(0, 1), help=SV_RATIO_HELP)
+@option('--sv_ratio', '-sr', default=1e-1, show_default=True, type=FloatRange(0, 1), help=SV_RATIO_HELP)
 @option('--splits', '-s', default='80:10:10', show_default=True, type=TripleSplit(), help=SPLITS_HELP)
-@option('--loss-fn', '-lf',  default='zo2', show_default=True, type=Choice(LOSS_FUNCTIONS), help=LOSS_FN_HELP)
-@option('--log', default=.1, type=FloatRange(0, 1), show_default=True,  help=LOG_HELP)
+@option('--loss-fn', '-lf', default='zo2', show_default=True, type=Choice(LOSS_FUNCTIONS), help=LOSS_FN_HELP)
+@option('--log', default=0.1, type=FloatRange(0, 1), show_default=True, help=LOG_HELP)
 @option('--stop-loss', '-sl', default=1e-6, show_default=True, type=FloatRange(0), help=STOP_LOSS_HELP)
-@option('--unweighted', '-u',  is_flag=True, help=UNWEIGHTED_HELP)
-@option('--fail-states', '-fs',  is_flag=True, help=FAIL_STATES_HELP)
-@option('--quant', '-q', default=7, show_default=True,  type=IntRange(0), help=QUANT_HELP)
+@option('--unweighted', '-u', is_flag=True, help=UNWEIGHTED_HELP)
+@option('--fail-states', '-fs', is_flag=True, help=FAIL_STATES_HELP)
+@option('--quant', '-q', default=7, show_default=True, type=IntRange(0), help=QUANT_HELP)
 @option('--basis', '-b', default='auto', show_default=True, type=Choice(BASES), help=BASIS_HELP)
 @option('--topk', '-t', type=RangeOfSteppedPercentages(), help=TOP_K_HELP)
 @option('--topk-pref', '-tp', type=RangeOfSteppedPercentages(), help=TOP_K_PREF_HELP)
 @option('--topk-suff', '-ts', type=RangeOfSteppedPercentages(), help=TOP_K_SUFF_HELP)
 @option('--extra-tokens', '-e', type=CSVList(2**16), required=False, help=EXTRA_VOCAB_HELP)
-@option('--verbose', '-v',  is_flag=True, help='Verbose output')
-def learn(infile: str,
-          model: BufferedWriter | None,
-          kind: Kind,
-          dim: int,
-          sv_ratio: float,
-          splits: Tuple[int, int, int],
-          loss_fn: str,
-          stop_loss: float,
-          unweighted: bool,
-          fail_states:bool,
-          quant: int,
-          log: float,
-          basis: str,
-          topk: Tuple[float, float, float] | None,
-          topk_pref: Tuple[float, float, float] | None,
-          topk_suff: Tuple[float, float, float] | None,
-          extra_tokens: Tuple[str, ...],
-          verbose: bool):
-
+@option('--verbose', '-v', is_flag=True, help='Verbose output')
+def learn(
+    infile: str,
+    model: BufferedWriter | None,
+    kind: Kind,
+    dim: int,
+    sv_ratio: float,
+    splits: Tuple[int, int, int],
+    loss_fn: str,
+    stop_loss: float,
+    unweighted: bool,
+    fail_states: bool,
+    quant: int,
+    log: float,
+    basis: str,
+    topk: Tuple[float, float, float] | None,
+    topk_pref: Tuple[float, float, float] | None,
+    topk_suff: Tuple[float, float, float] | None,
+    extra_tokens: Tuple[str, ...],
+    verbose: bool,
+):
     if verbose:
         config_logging(LOG, sparse=False, level=DEBUG)
 
     try:
-
         if kind == 'lm':
             if loss_fn != 'ppl':
                 LOG.warning('Setting loss function to perplexity...')
@@ -253,14 +249,16 @@ def learn(infile: str,
 
         bases: Tuple[str, ...] = ('pmi', 'freq', 'length') if basis == 'auto' else (basis,)
         if basis == 'auto':
-            topk = topk or (0, 5, .5) if kind == 'lm' else (0, 25, .5)
-            topk_pref = topk_pref or (0, 5, .5) if kind == 'lm' else (0, 25, .5)
-            topk_suff = topk_suff or (0, 5, .5) if kind == 'lm' else (0, 25, .5)
-        topks = () if not topk else tuple(arange(topk[0], topk[1]+topk[2], topk[2])/100)
-        topk_prefs = () if not topk_pref else tuple(
-            arange(topk_pref[0], topk_pref[1]+topk_pref[2], topk_pref[2])/100)
-        topk_suffs = () if not topk_suff else tuple(
-            arange(topk_suff[0], topk_suff[1]+topk_suff[2], topk_suff[2])/100)
+            topk = topk or (0, 5, 0.5) if kind == 'lm' else (0, 25, 0.5)
+            topk_pref = topk_pref or (0, 5, 0.5) if kind == 'lm' else (0, 25, 0.5)
+            topk_suff = topk_suff or (0, 5, 0.5) if kind == 'lm' else (0, 25, 0.5)
+        topks = () if not topk else tuple(arange(topk[0], topk[1] + topk[2], topk[2]) / 100)
+        topk_prefs = (
+            () if not topk_pref else tuple(arange(topk_pref[0], topk_pref[1] + topk_pref[2], topk_pref[2]) / 100)
+        )
+        topk_suffs = (
+            () if not topk_suff else tuple(arange(topk_suff[0], topk_suff[1] + topk_suff[2], topk_suff[2]) / 100)
+        )
 
         extra_tokens = extra_tokens or ()
 
@@ -270,70 +268,83 @@ def learn(infile: str,
         if isinstance(model, str) and not model.endswith('.npz'):
             raise BadParameter(f'Output file [{model}] must end with .npz')
 
-        args: Final[Mapping[str, Any]] = dict(infile=infile,
-                                              model=model,
-                                              kind=kind,
-                                              dim=dim,
-                                              sv_ratio=sv_ratio,
-                                              splits=splits,
-                                              loss_fn=loss_fn,
-                                              stop_loss=stop_loss,
-                                              unweighted=unweighted,
-                                              fail_states=fail_states,
-                                              quant=quant,
-                                              log=log,
-                                              basis=basis,
-                                              topk=topk,
-                                              topk_prefix=topk_pref,
-                                              topk_suffix=topk_suff,
-                                              extra_tokens=extra_tokens,
-                                              verbose=verbose)
-        info: str = Template(
-            reduce(lambda t, item: t+f'\t{item[0]:15s} {item[-1]}\n', args.items(), '')).substitute(**args)
+        args: Final[Mapping[str, Any]] = dict(
+            infile=infile,
+            model=model,
+            kind=kind,
+            dim=dim,
+            sv_ratio=sv_ratio,
+            splits=splits,
+            loss_fn=loss_fn,
+            stop_loss=stop_loss,
+            unweighted=unweighted,
+            fail_states=fail_states,
+            quant=quant,
+            log=log,
+            basis=basis,
+            topk=topk,
+            topk_prefix=topk_pref,
+            topk_suffix=topk_suff,
+            extra_tokens=extra_tokens,
+            verbose=verbose,
+        )
+        info: str = Template(reduce(lambda t, item: t + f'\t{item[0]:15s} {item[-1]}\n', args.items(), '')).substitute(
+            **args
+        )
         LOG.info(f'Running tuning loop with args:\n\n{info}')
 
-        t_data, v_data, e_data, x_vocab, y_vocab = _extract_data(infile, kind,  splits, extra_tokens)
+        t_data, v_data, e_data, x_vocab, y_vocab = _extract_data(infile, kind, splits, extra_tokens)
 
-        wfsa, t_loss, v_loss, e_loss, spec = grid_search(kind=kind,
-                                                         x_vocab=x_vocab,
-                                                         y_vocab=y_vocab,
-                                                         hyper_params=dict(basis_algos=bases,
-                                                                           factor_algos=('svd',),
-                                                                           topks=topks,
-                                                                           topk_prefs=topk_prefs,
-                                                                           topk_suffs=topk_suffs,
-                                                                           t_loss_fns=(loss_fn,),
-                                                                           v_loss_fns=(loss_fn,),
-                                                                           dims=(dim,),
-                                                                           base_vocabs=(extra_tokens,),
-                                                                           sv_ratios=(sv_ratio,)),
-                                                         t_data=t_data,
-                                                         v_data=v_data,
-                                                         e_data=e_data,
-                                                         stop_loss=stop_loss,
-                                                         period=log,
-                                                         unweighted=unweighted,
-                                                         fail_states=fail_states,
-                                                         quant=quant)
-        LOG.info(SPEC_TEMPLATE.substitute(t_loss=f'{t_loss:.2e}',
-                                          v_loss=f'{v_loss:.2e}',
-                                          e_loss=f'{e_loss:.2e}' if e_loss is not None else '---',
-                                          basis_algo=spec['basis_algo'],
-                                          run=spec['run'],
-                                          topk=spec.get('topk', 'N/A'),
-                                          topk_pref=spec.get('topk_pref', 'N/A'),
-                                          topk_suff=spec.get('topk_suff', 'N/A'),
-                                          ternariness=f'{spec["ternariness"]:.1f}',
-                                          dim=wfsa.initial.shape[0]))
+        wfsa, t_loss, v_loss, e_loss, spec = grid_search(
+            kind=kind,
+            x_vocab=x_vocab,
+            y_vocab=y_vocab,
+            hyper_params=dict(
+                basis_algos=bases,
+                factor_algos=('svd',),
+                topks=topks,
+                topk_prefs=topk_prefs,
+                topk_suffs=topk_suffs,
+                t_loss_fns=(loss_fn,),
+                v_loss_fns=(loss_fn,),
+                dims=(dim,),
+                base_vocabs=(extra_tokens,),
+                sv_ratios=(sv_ratio,),
+            ),
+            t_data=t_data,
+            v_data=v_data,
+            e_data=e_data,
+            stop_loss=stop_loss,
+            period=log,
+            unweighted=unweighted,
+            fail_states=fail_states,
+            quant=quant,
+        )
+        LOG.info(
+            SPEC_TEMPLATE.substitute(
+                t_loss=f'{t_loss:.2e}',
+                v_loss=f'{v_loss:.2e}',
+                e_loss=f'{e_loss:.2e}' if e_loss is not None else '---',
+                basis_algo=spec['basis_algo'],
+                run=spec['run'],
+                topk=spec.get('topk', 'N/A'),
+                topk_pref=spec.get('topk_pref', 'N/A'),
+                topk_suff=spec.get('topk_suff', 'N/A'),
+                ternariness=f'{spec["ternariness"]:.1f}',
+                dim=wfsa.initial.shape[0],
+            )
+        )
 
-        metadata: Dict[str, Any] = dict(basis=spec['basis_algo'],
-                                        t_loss=t_loss,
-                                        v_loss=v_loss,
-                                        e_loss=e_loss,
-                                        run=spec['run'],
-                                        kind=kind,
-                                        vocab=x_vocab,
-                                        unweighted=unweighted)
+        metadata: Dict[str, Any] = dict(
+            basis=spec['basis_algo'],
+            t_loss=t_loss,
+            v_loss=v_loss,
+            e_loss=e_loss,
+            run=spec['run'],
+            kind=kind,
+            vocab=x_vocab,
+            unweighted=unweighted,
+        )
         if unweighted:
             metadata['quant'] = quant
 
@@ -352,6 +363,7 @@ def learn(infile: str,
     except Exception as e:
         LOG.exception('Error during hyper-parameter search', exc_info=e)
         sys.exit(1)
+
 
 # ----------------------------------------------------------------------------------------------------------------------
 
@@ -384,7 +396,7 @@ PRED_OUT_HELP: Final[str] = """A comma-separated list of output formats for the 
 @option('--output', '-o', default='cons', required=False, type=CSVList(2), help=PRED_OUT_HELP)
 @option('--sort', '-s', default=False, is_flag=True, help=SORT_HELP)
 @option('--verbose', '-v', is_flag=True, help='Verbose output')
-def predict(infile: str, model: str, output: Tuple[str, ...], sort: bool,  verbose: bool):
+def predict(infile: str, model: str, output: Tuple[str, ...], sort: bool, verbose: bool):
     if verbose:
         config_logging(LOG, sparse=False, level=DEBUG)
 
@@ -407,7 +419,9 @@ def predict(infile: str, model: str, output: Tuple[str, ...], sort: bool,  verbo
         case _:
             raise ValueError(f'Unknown WFSA kind [{metadata["kind"]}]')
 
-    preds: Iterable[Tuple[Tuple[str, ...], float]] = zip(data, predict_fn(wfsa, dataset))
+    preds: Iterable[Tuple[Tuple[str, ...], float]] = zip(
+        (tuple(datum) for batch in make_batches(data) for datum in batch), predict_fn(wfsa, dataset)
+    )
 
     if sort:
         preds = sorted(preds, key=lambda data_pred: (-data_pred[-1], len(data_pred[0]), data_pred[0]))
@@ -420,6 +434,7 @@ def predict(infile: str, model: str, output: Tuple[str, ...], sort: bool,  verbo
     if '.' in ''.join(output):
         with open(output[0] if '.' in output[0] else output[-1], 'w', encoding='utf8') as f:
             f.write(out_str)
+
 
 # ----------------------------------------------------------------------------------------------------------------------
 
@@ -480,13 +495,15 @@ def show(model: str | BufferedReader | None, output: Tuple[str, ...], verbose: b
         raise ValueError('Invalid model file. Vocabulary size does not match the number of transition matrices')
 
     for path in output:
-        ext: str = path if path == 'cons' else '.'+path.split('.')[-1]
+        ext: str = path if path == 'cons' else '.' + path.split('.')[-1]
 
         match ext:
-
             case 'cons':
-                print(f'\n{kind.upper()} FSA Weights\t(∘ = 0   ■ = 1 )\n\n' if unweighted else
-                      f'\n{kind.upper()} WFSA Weights\t( □ = -1  ∘ = 0   ■ = 1 )\n\n')
+                print(
+                    f'\n{kind.upper()} FSA Weights\t(∘ = 0   ■ = 1 )\n\n'
+                    if unweighted
+                    else f'\n{kind.upper()} WFSA Weights\t( □ = -1  ∘ = 0   ■ = 1 )\n\n'
+                )
 
                 nout(wfsa.initial, fracs=fracs, row_hs=['α'], indent=2)
                 print()
@@ -507,9 +524,12 @@ def show(model: str | BufferedReader | None, output: Tuple[str, ...], verbose: b
                         m_power = m @ m_power
 
                         if allclose(m_power, zeroes, rtol=0, atol=1e-5):
-                            kind = (f'Null: M = 0' if power == 1 else
-                                    f'Nilpotent index {power}: M{num_to_super(power)} = 0, '
-                                    f'M{num_to_super(power-1)} ≠ 0')
+                            kind = (
+                                f'Null: M = 0'
+                                if power == 1
+                                else f'Nilpotent index {power}: M{num_to_super(power)} = 0, '
+                                f'M{num_to_super(power - 1)} ≠ 0'
+                            )
                             break
 
                         if allclose(m_power, identity, rtol=0, atol=1e-5):
@@ -520,7 +540,7 @@ def show(model: str | BufferedReader | None, output: Tuple[str, ...], verbose: b
                                     kind = f'Involutory: M{num_to_super(2)} = I, M ≠ I'
                                 case _:
                                     kind = f'{power}{"rd" if power == 3 else "th"} power of Identity\t'
-                                    f': M{num_to_super(power)} = I, M{num_to_super(power-1)} ≠ I'
+                                    f': M{num_to_super(power)} = I, M{num_to_super(power - 1)} ≠ I'
                             break
 
                         if power >= 2 and allclose(m_power, m, rtol=0, atol=1e-5):
@@ -530,13 +550,15 @@ def show(model: str | BufferedReader | None, output: Tuple[str, ...], verbose: b
                                 case 3:
                                     kind = f'Tripotent: M{num_to_super(3)} = M, M{num_to_super(2)} ≠ M'
                                 case _:
-                                    kind = f'{power}-potent: M{num_to_super(power)} = M, M{num_to_super(power-1)} ≠ M'
+                                    kind = f'{power}-potent: M{num_to_super(power)} = M, M{num_to_super(power - 1)} ≠ M'
 
                             break
 
-                        if allclose(m_power, matrix_power(m, power-1), rtol=0, atol=1e-5):
-                            kind = (f'Idempotent index {power}: M{num_to_super(power)} = M{num_to_super(power-1)}, '
-                                    f'M{num_to_super(power-1)} ≠ M{num_to_super(power-2)}')
+                        if allclose(m_power, matrix_power(m, power - 1), rtol=0, atol=1e-5):
+                            kind = (
+                                f'Idempotent index {power}: M{num_to_super(power)} = M{num_to_super(power - 1)}, '
+                                f'M{num_to_super(power - 1)} ≠ M{num_to_super(power - 2)}'
+                            )
                             break
 
                     print(f'A{num_to_super(s)}  {kind}')
@@ -552,8 +574,8 @@ def show(model: str | BufferedReader | None, output: Tuple[str, ...], verbose: b
             case _:
                 raise BadParameter(f'Unsupported output format [{path}]')
 
-# --------------------------------------------------- DELEGATE FUNCTIONS -----------------------------------------------
 
+# --------------------------------------------------- DELEGATE FUNCTIONS -----------------------------------------------
 
 def _extract_data(infile: str, kind: str, splits: Tuple[int, int, int], extra_tokens: Tuple[str, ...]):
 
@@ -568,7 +590,6 @@ def _extract_data(infile: str, kind: str, splits: Tuple[int, int, int], extra_to
             x_vocab.update(x)
 
     else:
-
         data = tuple(load_labelled_data(infile))
         for x, y in data:
             x_vocab.update(x)
@@ -581,10 +602,12 @@ def _extract_data(infile: str, kind: str, splits: Tuple[int, int, int], extra_to
     # if no validation split is provided, it uses training data instead
     # acceptors' training set is added to the validation set to improve performance, especially with small datasets
     t_data = data[:t] if (v or e) else data  # all data is used for training when no validation or test data
-    v_data = data[(t if kind == 'lm' and v else 0): t + v]  # if validation split is 0, it uses training data instead
-    e_data = data[t+v:] if e else ()  # ensures 0 split is honoured
+    v_data = data[(t if kind == 'lm' and v else 0) : t + v]  # if validation split is 0, it uses training data instead
+    e_data = data[t + v :] if e else ()  # ensures 0 split is honoured
 
     return t_data, v_data, e_data, tuple(sorted(x_vocab)), tuple(sorted(y_vocab))
+
+
 
 
 if __name__ == '__main__':
