@@ -1,3 +1,8 @@
+## [](https://github.com/JoseLlarena/hankel/compare/v0.4.4...v) (2025-08-29)
+
+### Bug Fixes
+
+* missing state during WFSA to FSA conversion ([f3c67da](https://github.com/JoseLlarena/hankel/commit/f3c67da17f5e59313c6c3b51961cf58c4d3b2243))
 ## [](https://github.com/JoseLlarena/hankel/compare/v0.4.2...v) (2025-08-29)
 
 ### Features
