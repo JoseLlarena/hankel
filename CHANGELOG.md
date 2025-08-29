@@ -1,3 +1,21 @@
+## [](https://github.com/JoseLlarena/hankel/compare/v0.4.2...v) (2025-08-29)
+
+### Features
+
+* make make_batches public and broaden input type; style: format with ruff ([337a574](https://github.com/JoseLlarena/hankel/commit/337a574a3e8cefd53a8be969c8458554b088c64a))
+
+### Bug Fixes
+
+* reduce font size in state-transition diagram ([b5a615f](https://github.com/JoseLlarena/hankel/commit/b5a615f1ca5139b4f11857b1de959b0e05afb96b))
+## [](https://github.com/JoseLlarena/hankel/compare/v0.4.2...v) (2025-08-29)
+
+### Features
+
+* make make_batches public and broaden input type; style: format with ruff ([337a574](https://github.com/JoseLlarena/hankel/commit/337a574a3e8cefd53a8be969c8458554b088c64a))
+
+### Bug Fixes
+
+* bug in prediction logic; style: format with ruff ([4333651](https://github.com/JoseLlarena/hankel/commit/43336512b79a12534ad017394102173f06440ae6))
 # [](https://github.com/JoseLlarena/hankel/compare/v0.4.1...v) (2025-08-27)
 
 ### Docs
