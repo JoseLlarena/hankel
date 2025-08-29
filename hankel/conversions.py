@@ -207,8 +207,8 @@ def wfsa_to_graphviz(
         root=state_names[argmax(initials)],
     )
 
-    graph = _draw_states(state_names, unweighted, initials, finals, graph, fontsize='12')
-    graph = _draw_transitions(graph, wfsa, state_names, symbol_names, unweighted, fontsize='12')
+    graph = _draw_states(state_names, unweighted, initials, finals, graph, fontsize='10')
+    graph = _draw_transitions(graph, wfsa, state_names, symbol_names, unweighted, fontsize='10')
 
     return graph
 
