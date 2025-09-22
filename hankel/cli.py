@@ -3,7 +3,6 @@
 CLI for learning Weighted Finite State Automata using the Spectral method.
 """
 
-import sys
 import webbrowser
 from collections.abc import Iterable
 from functools import reduce
@@ -12,21 +11,8 @@ from logging import DEBUG, Logger, getLogger
 from os.path import abspath
 from string import Template
 from typing import Any, Dict, Final, Mapping, Tuple
-from statistics import mean
-from typing import List, Tuple
 
-import matplotlib.pyplot
-
-from hankel import nout
-from numpy import asarray, eye, stack, vstack
-from numpy.random import Generator, default_rng, randn
-from numpy.typing import NDArray
-from scipy.linalg import svd
-from tensorly import norm
-from tensorly.decomposition import tucker
-from tensorly.tenalg import mode_dot
-
-
+import sys
 from click import BadParameter, Choice, File, FloatRange, IntRange, Path, argument, get_binary_stream, group, option
 from numpy import allclose, arange, eye, stack, zeros_like
 from numpy.linalg import matrix_power
@@ -39,8 +25,6 @@ from hankel.evaluation import class_predict, lm_predict, make_batches
 from hankel.hp_search import grid_search
 from hankel.model_io import load_wfsa, save_wfsa
 from hankel.spectral import Kind
-from innerview.plotting import draw_3d_background, make_3d_plot
-from innerview.points import draw_cloud
 
 LOG: Final[Logger] = getLogger(__package__)
 
@@ -193,27 +177,27 @@ def cli():
 @option('--topk', '-t', type=RangeOfSteppedPercentages(), help=TOP_K_HELP)
 @option('--topk-pref', '-tp', type=RangeOfSteppedPercentages(), help=TOP_K_PREF_HELP)
 @option('--topk-suff', '-ts', type=RangeOfSteppedPercentages(), help=TOP_K_SUFF_HELP)
-@option('--extra-tokens', '-e', type=CSVList(2**16), required=False, help=EXTRA_VOCAB_HELP)
+@option('--extra-tokens', '-e', type=CSVList(2 ** 16), required=False, help=EXTRA_VOCAB_HELP)
 @option('--verbose', '-v', is_flag=True, help='Verbose output')
 def learn(
-    infile: str,
-    model: BufferedWriter | None,
-    kind: Kind,
-    dim: int,
-    sv_ratio: float,
-    splits: Tuple[int, int, int],
-    loss_fn: str,
-    stop_loss: float,
-    unweighted: bool,
-    fail_states: bool,
-    quant: int,
-    log: float,
-    basis: str,
-    topk: Tuple[float, float, float] | None,
-    topk_pref: Tuple[float, float, float] | None,
-    topk_suff: Tuple[float, float, float] | None,
-    extra_tokens: Tuple[str, ...],
-    verbose: bool,
+        infile: str,
+        model: BufferedWriter | None,
+        kind: Kind,
+        dim: int,
+        sv_ratio: float,
+        splits: Tuple[int, int, int],
+        loss_fn: str,
+        stop_loss: float,
+        unweighted: bool,
+        fail_states: bool,
+        quant: int,
+        log: float,
+        basis: str,
+        topk: Tuple[float, float, float] | None,
+        topk_pref: Tuple[float, float, float] | None,
+        topk_suff: Tuple[float, float, float] | None,
+        extra_tokens: Tuple[str, ...],
+        verbose: bool,
 ):
     if verbose:
         config_logging(LOG, sparse=False, level=DEBUG)
@@ -528,7 +512,7 @@ def show(model: str | BufferedReader | None, output: Tuple[str, ...], verbose: b
                                 f'Null: M = 0'
                                 if power == 1
                                 else f'Nilpotent index {power}: M{num_to_super(power)} = 0, '
-                                f'M{num_to_super(power - 1)} ≠ 0'
+                                     f'M{num_to_super(power - 1)} ≠ 0'
                             )
                             break
 
@@ -578,7 +562,6 @@ def show(model: str | BufferedReader | None, output: Tuple[str, ...], verbose: b
 # --------------------------------------------------- DELEGATE FUNCTIONS -----------------------------------------------
 
 def _extract_data(infile: str, kind: str, splits: Tuple[int, int, int], extra_tokens: Tuple[str, ...]):
-
     data: Tuple[Tuple[Tuple[str, ...], str] | Tuple[str, ...], ...]
     x_vocab: set[str] = set(extra_tokens)
     y_vocab: set[str] = set()
@@ -602,12 +585,10 @@ def _extract_data(infile: str, kind: str, splits: Tuple[int, int, int], extra_to
     # if no validation split is provided, it uses training data instead
     # acceptors' training set is added to the validation set to improve performance, especially with small datasets
     t_data = data[:t] if (v or e) else data  # all data is used for training when no validation or test data
-    v_data = data[(t if kind == 'lm' and v else 0) : t + v]  # if validation split is 0, it uses training data instead
-    e_data = data[t + v :] if e else ()  # ensures 0 split is honoured
+    v_data = data[(t if kind == 'lm' and v else 0): t + v]  # if validation split is 0, it uses training data instead
+    e_data = data[t + v:] if e else ()  # ensures 0 split is honoured
 
     return t_data, v_data, e_data, tuple(sorted(x_vocab)), tuple(sorted(y_vocab))
-
-
 
 
 if __name__ == '__main__':
