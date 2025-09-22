@@ -84,7 +84,7 @@ def with_single_start(initial: NDArray, transitions: NDArray, final: NDArray) ->
 
 
 @deal.pre(
-    lambda initial, transitions, final, length=-1, quant=7: initial.ndim == 1
+    lambda initial, transitions, final, quant=7, fail_states=True: initial.ndim == 1
     and initial.size
     and transitions.ndim == 3
     and transitions.size
@@ -92,7 +92,6 @@ def with_single_start(initial: NDArray, transitions: NDArray, final: NDArray) ->
     and transitions.shape[-2] == initial.shape[0]
     and final.size
     and final.shape == initial.shape
-    and (length == -1 or length > 0)
     and quant >= 0
 )
 @validate_call(config=PYDANTIC_CONFIG, validate_return=True)
@@ -105,7 +104,7 @@ def as_unweighted(
 
     states: Set[Tuple[float, ...]] = set()
     for q, _, q_next in transits:
-        states.update((q,q_next))
+        states.update((q, q_next))
 
     state_to_id = dict(zip(states, range(len(states))))
 
@@ -113,7 +112,6 @@ def as_unweighted(
     initial_: NDArray = zeros((dim,))
     final_: NDArray = zeros((dim,))
     transitions_: NDArray = stack([zeros((dim, dim)) for _ in range(len(transitions))], axis=-3)
-
 
     for q, symbol, q_next in transits:
         transitions_[symbol][state_to_id[q]][state_to_id[q_next]] = 1
