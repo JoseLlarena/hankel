@@ -50,7 +50,7 @@ def evaluate(
 
 
 @validate_call(config=PYDANTIC_CONFIG, validate_return=True)
-def score(model: Fn[[NDArray], NDArray], xs: Iterable[NDArray], ppl: bool = True, normed: bool = False) -> float:
+def score(model: Fn[[NDArray], NDArray], xs: Sequence[NDArray], ppl: bool = True, normed: bool = False) -> float:
     """
     Scores the given language model.
 
@@ -75,7 +75,7 @@ def score(model: Fn[[NDArray], NDArray], xs: Iterable[NDArray], ppl: bool = True
 
 
 @validate_call(config=PYDANTIC_CONFIG, validate_return=True)
-def lm_predict(model: Fn[[NDArray], NDArray], xs: Iterable[NDArray], normed: bool = False) -> Iterable[float]:
+def lm_predict(model: Fn[[NDArray], NDArray], xs: Sequence[NDArray], normed: bool = False) -> Iterable[float]:
     """
     Predicts the base-10 negative log likelihoods for each input sequence using the model. If the model output is
     non-positive, a minimum probability of 1e-16 is used.
@@ -93,8 +93,8 @@ def lm_predict(model: Fn[[NDArray], NDArray], xs: Iterable[NDArray], normed: boo
         yield from -log10(model(batch).clip(MIN_PROB, 1)) / length  # clipping as no guarantee output in (0,1]
 
 
-@validate_call(config=PYDANTIC_CONFIG, validate_return=True)
-def class_predict(model: Fn[[NDArray], NDArray], xs: Iterable[NDArray]) -> Iterable[float]:
+@validate_call(config=PYDANTIC_CONFIG, validate_return= True)
+def class_predict(model: Fn[[NDArray], NDArray], xs: Sequence[NDArray]) -> Iterable[NDArray]:
     """
     Predicts the class of each input sequence using the model.
 
@@ -145,7 +145,7 @@ def zero_one_loss(y_hats: NDArray, ys: NDArray, tol: float | floating = 1e-5, re
 
 
 @validate_call(config=PYDANTIC_CONFIG, validate_return=True)
-def avg_ternariness_of(params: Iterable[NDArray], tol: float) -> float:
+def avg_ternariness_of(params: Sequence[NDArray], tol: float) -> float:
     """
     Computes the average ternariness of the given set of parameters. Ternariness is defined as the closeness of
     a parameter to -1, 0 or 1, and it's an extension of binarity (or booleanness).
@@ -178,7 +178,7 @@ def _evaluate_batch(
     return loss_fn(model(xs), ys, reduction=red).item()  # BxTxD -> BxTxK
 
 
-def make_batches(xs: Iterable[S]) -> Iterable[NDArray]:
+def make_batches(xs: Sequence[S]) -> Iterable[NDArray]:
     grouped_by_x_len: bucket = bucket(xs, key=len)
 
     yield from (stack(tuple(grouped_by_x_len[x_len])) for x_len in grouped_by_x_len)
