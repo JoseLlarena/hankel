@@ -1,3 +1,14 @@
+# [](https://github.com/JoseLlarena/hankel/compare/v0.4.5...v) (2025-09-22)
+
+
+### Bug Fixes
+
+* but in precondition checking; decrease fontsize in graphs; reformat ([f80e9a3](https://github.com/JoseLlarena/hankel/commit/f80e9a330cc02cf881b9326b8f3ec0a68165085c))
+* change Iterable to Sequence type-hints to avoid deal bug ([17cd950](https://github.com/JoseLlarena/hankel/commit/17cd9504917519b24aee51d057956a6cf208ca2a))
+* remove spurious imports in cli.py ([a1df81d](https://github.com/JoseLlarena/hankel/commit/a1df81d629b86830cc754feb3e3badc6b891ac54))
+
+
+
 ## [](https://github.com/JoseLlarena/hankel/compare/v0.4.4...v) (2025-08-29)
 
 ### Bug Fixes
