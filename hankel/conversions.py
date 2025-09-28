@@ -3,7 +3,8 @@ Module for conversions from, to and between different types of WFSAs and other s
 """
 
 from collections import defaultdict, deque
-from collections.abc import Mapping, Sequence, Set
+from collections.abc import Mapping, Sequence, Set, MutableSet
+from html import escape
 from logging import Logger, getLogger
 from math import atan2, degrees
 from typing import Deque, Dict, Final, FrozenSet, List, Literal, Tuple, TypeAlias
@@ -35,29 +36,27 @@ from scipy.linalg import inv, norm, svd
 from hankel import PYDANTIC_CONFIG
 from hankel.models import WFSA
 
-# fmt: off
 Port: TypeAlias = Literal['n', 's', 'e', 'w', 'nw', 'sw', 'se', 'ne']
 
 ALL_PORTS: Final[Tuple[Port, ...]] = ('n', 's', 'e', 'w', 'nw', 'sw', 'se', 'ne')
 SYMBOL_TO_SUBSCRIPT: Final[Mapping[str, str]] = dict(zip('0123456789-', '₀₁₂₃₄₅₆₇₈₉₋'))
 SYMBOL_TO_SUPERSCRIPT: Final[Mapping[str, str]] = \
-    dict(zip("0123456789", "⁰¹²³⁴⁵⁶⁷⁸⁹")) |\
-    dict(zip("abcdefghijklmnopqrstuvwxyz", "ᵃᵇᶜᵈᵉᶠᵍʰⁱʲᵏˡᵐⁿᵒᵖqʳˢᵗᵘᵛʷˣʸᶻ")) |\
+    dict(zip("0123456789", "⁰¹²³⁴⁵⁶⁷⁸⁹")) | \
+    dict(zip("abcdefghijklmnopqrstuvwxyz", "ᵃᵇᶜᵈᵉᶠᵍʰⁱʲᵏˡᵐⁿᵒᵖqʳˢᵗᵘᵛʷˣʸᶻ")) | \
     dict(zip("ABCDEFGHIJKLMNOPQRSTUVWXYZ", ('ᴬ', 'ᴮ', '[ᶜ]', 'ᴰ', 'ᴱ', '[ᶠ]', '[ᵍ]', 'ᴴ', 'ᴵ', '[ʲ]', 'ᴷ', 'ᴸ', 'ᴹ',
                                             'ᴺ', 'ᴼ', 'ᴾ', '[q]', 'ᴿ', '[ˢ]', 'ᵀ', 'ᵁ', 'ⱽ', 'ᵂ', '[ˣ]', '[ʸ]', '[ᶻ]')))
-# fmt: on
 LOG: Final[Logger] = getLogger(__package__)
 
 
 @deal.pre(
     lambda initial, transitions, final: initial.ndim == 1
-    and initial.size
-    and transitions.ndim == 3
-    and transitions.size
-    and transitions.shape[-2] == transitions.shape[-1]
-    and transitions.shape[-1] == initial.shape[0]
-    and final.size
-    and final.shape == initial.shape
+                                        and initial.size
+                                        and transitions.ndim == 3
+                                        and transitions.size
+                                        and transitions.shape[-2] == transitions.shape[-1]
+                                        and transitions.shape[-1] == initial.shape[0]
+                                        and final.size
+                                        and final.shape == initial.shape
 )
 @validate_call(config=PYDANTIC_CONFIG, validate_return=True)
 def with_single_start(initial: NDArray, transitions: NDArray, final: NDArray) -> Tuple[NDArray, NDArray, NDArray]:
@@ -85,18 +84,18 @@ def with_single_start(initial: NDArray, transitions: NDArray, final: NDArray) ->
 
 @deal.pre(
     lambda initial, transitions, final, quant=7, fail_states=True: initial.ndim == 1
-    and initial.size
-    and transitions.ndim == 3
-    and transitions.size
-    and transitions.shape[-2] == transitions.shape[-1]
-    and transitions.shape[-2] == initial.shape[0]
-    and final.size
-    and final.shape == initial.shape
-    and quant >= 0
+                                                                   and initial.size
+                                                                   and transitions.ndim == 3
+                                                                   and transitions.size
+                                                                   and transitions.shape[-2] == transitions.shape[-1]
+                                                                   and transitions.shape[-2] == initial.shape[0]
+                                                                   and final.size
+                                                                   and final.shape == initial.shape
+                                                                   and quant >= 0
 )
 @validate_call(config=PYDANTIC_CONFIG, validate_return=True)
 def as_unweighted(
-    initial: NDArray, transitions: NDArray, final: NDArray, quant: int = 7, fail_states: bool = True
+        initial: NDArray, transitions: NDArray, final: NDArray, quant: int = 7, fail_states: bool = True
 ) -> Tuple[NDArray, NDArray, NDArray]:
     transits: Set[Tuple[Tuple[float, ...], int, Tuple[float, ...]]] = set()
     for symbol in range(len(transitions)):
@@ -126,7 +125,7 @@ def as_unweighted(
     if not fail_states:  # removes fail states, defined as those that are absorbing but not accepting
         all_ = swapaxes(transitions_, -1, -2).sum(axis=0)
 
-        fail: Set[int] = set()
+        fail: MutableSet[int] = set()
         for idx, col in enumerate(all_.T):
             zero_except_idx = np.all(col[arange(all_.shape[0]) != idx] == 0)
             if zero_except_idx and col[idx] == len(transitions_) and final_[idx] != 1:
@@ -140,23 +139,21 @@ def as_unweighted(
     return initial_, transitions_, final_
 
 
-@deal.pre(
-    lambda wfsa,
-    symbol_names=(),
-    state_names=(),
-    unweighted=False,
-    title='WFSA State Transition Diagram': not symbol_names
-    or len(symbol_names) == len(wfsa.transitions)
-    and not state_names
-    or len(state_names) == len(wfsa.initial)
-)
+@deal.pre(lambda wfsa,
+                 symbol_names=(),
+                 state_names=(),
+                 unweighted=False,
+                 title='WFSA State Transition Diagram': not symbol_names
+                                                        or len(symbol_names) == len(wfsa.transitions)
+                                                        and not state_names
+                                                        or len(state_names) == len(wfsa.initial))
 @validate_call(config=PYDANTIC_CONFIG, validate_return=True)
 def wfsa_to_graphviz(
-    wfsa: WFSA,
-    symbol_names: Sequence[str] = (),
-    state_names: Sequence[str] = (),
-    unweighted: bool = False,
-    title: str = 'WFSA',
+        wfsa: WFSA,
+        symbol_names: Sequence[str] = (),
+        state_names: Sequence[str] = (),
+        unweighted: bool = False,
+        title: str = 'WFSA',
 ) -> Digraph:
     """
     Generates a Graphviz Digraph with the state-transition diagram of the given WFSA.
@@ -214,14 +211,14 @@ def wfsa_to_graphviz(
 
 @deal.pre(
     lambda ps, Ts, Os: Ts.ndim == 2
-    and Ts.size
-    and Ts.shape[0] == Ts.shape[1]
-    and Os.ndim == 2
-    and Os.size
-    and Os.shape[1] == Ts.shape[1]
-    and ps.ndim == 1
-    and ps.size
-    and ps.shape[0] == Ts.shape[0]
+                       and Ts.size
+                       and Ts.shape[0] == Ts.shape[1]
+                       and Os.ndim == 2
+                       and Os.size
+                       and Os.shape[1] == Ts.shape[1]
+                       and ps.ndim == 1
+                       and ps.size
+                       and ps.shape[0] == Ts.shape[0]
 )
 @validate_call(config=PYDANTIC_CONFIG, validate_return=True)
 def hmm_to_wfsa(init: NDArray, transitions: NDArray, observations: NDArray) -> Tuple[NDArray, NDArray, NDArray]:
@@ -284,12 +281,12 @@ def _find_v2v_matrix(a: NDArray, b: NDArray) -> NDArray:
 
 
 def _find_transitions(
-    symbol: int,
-    embedding: NDArray,
-    mats: NDArray,
-    transitions: Set[Tuple[Tuple[float, ...], int, Tuple[float, ...]]],
-    quant: int,
-    depth: int,
+        symbol: int,
+        embedding: NDArray,
+        mats: NDArray,
+        transitions: Set[Tuple[Tuple[float, ...], int, Tuple[float, ...]]],
+        quant: int,
+        depth: int,
 ):
     if depth > mats[symbol].shape[0] ** 2:
         return
@@ -306,7 +303,7 @@ def _find_transitions(
 
 
 def _draw_states(
-    state_names: Tuple[str, ...], unweighted: bool, initial: NDArray, finals: NDArray, graph: Digraph, fontsize: str
+        state_names: Tuple[str, ...], unweighted: bool, initial: NDArray, finals: NDArray, graph: Digraph, fontsize: str
 ) -> Digraph:
     """
     Draws the states of the WFSA as as vertices in a graph.
@@ -360,12 +357,12 @@ def _draw_states(
 
 
 def _draw_transitions(
-    graph: Digraph,
-    wfsa: WFSA,
-    state_names: Tuple[str, ...],
-    symbol_names: Tuple[str, ...],
-    unweighted: bool,
-    fontsize: str,
+        graph: Digraph,
+        wfsa: WFSA,
+        state_names: Tuple[str, ...],
+        symbol_names: Tuple[str, ...],
+        unweighted: bool,
+        fontsize: str,
 ) -> Digraph:
     """
     Draws WFSA transitions as labelled edges in a graph.
@@ -554,7 +551,8 @@ def _in_edge_box(symbols: Tuple[str, ...], weights: Tuple[float, ...]) -> str:
     if set(weights) == {0}:
         return ''
 
-    symbols, weights = zip(*[(symbol, weight) for symbol, weight in zip(symbols, weights) if weight != 0])
+    symbols, weights = zip(*[(escape(symbol).replace('[', '&#91;').replace(']', '&#93;'), weight) for symbol, weight
+                             in zip(symbols, weights) if weight != 0])
 
     label: str = ''.join(
         f'<TD BORDER="1" BGCOLOR="white" COLOR="#f0f0f0" VALIGN="middle">{symbol}<sub>&thinsp;{weight}</sub></TD>'
@@ -566,8 +564,7 @@ def _in_edge_box(symbols: Tuple[str, ...], weights: Tuple[float, ...]) -> str:
     return (
         f"""<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0" BGCOLOR="white" COLOR="white" """
         f"""ALIGN="center" VALIGN="middle">"""
-        f"""<TR>{label}</TR></TABLE>>"""
-    )
+        f"""<TR>{label}</TR></TABLE>>""")
 
 
 def _find_node_positions(graph: Digraph) -> Mapping[str, Tuple[float, float]]:
@@ -596,7 +593,7 @@ def _find_node_positions(graph: Digraph) -> Mapping[str, Tuple[float, float]]:
 
 
 def _find_occupied_ports(
-    wfsa: WFSA, state_names: Tuple[str, ...], node_positions: Mapping[str, Tuple[float, float]]
+        wfsa: WFSA, state_names: Tuple[str, ...], node_positions: Mapping[str, Tuple[float, float]]
 ) -> Mapping[str, FrozenSet[Port]]:
     """
 
