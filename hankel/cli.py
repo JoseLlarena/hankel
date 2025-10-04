@@ -341,7 +341,7 @@ def learn(
             metadata['topk_suff'] = float(spec['topk_suff'])
 
         out = get_binary_stream('stdout') if not model else model
-        LOG.info(f'Saving WFSA to [{out.name}]...')
+        LOG.info(f'Saving {"" if unweighted else "W"}FSA to [{out.name}]...')
         save_wfsa(wfsa, out, metadata)
 
     except Exception as e:
