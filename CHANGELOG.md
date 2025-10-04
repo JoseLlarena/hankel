@@ -1,3 +1,13 @@
+# [](https://github.com/JoseLlarena/hankel/compare/v0.4.6...v) (2025-10-04)
+
+
+### Bug Fixes
+
+* add escaping to symbols in state-transition diagram; fix type-hint for set; refactor ([1d70f56](https://github.com/JoseLlarena/hankel/commit/1d70f56c39fedc1e25087a8666d87c335ad082b3))
+* saving message ([f30d664](https://github.com/JoseLlarena/hankel/commit/f30d664c3f661aa4abc749c425c6b03a3cd25087))
+
+
+
 # [](https://github.com/JoseLlarena/hankel/compare/v0.4.5...v) (2025-09-22)
 
 
